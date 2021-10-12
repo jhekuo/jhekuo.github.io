@@ -6,13 +6,13 @@
     <description>Recent content on Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 10 Oct 2021 15:44:02 +0800</lastBuildDate><atom:link href="https://imingx.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 12 Oct 2021 12:44:02 +0800</lastBuildDate><atom:link href="https://imingx.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>3</title>
-      <link>https://imingx.github.io/posts/3/</link>
-      <pubDate>Sun, 10 Oct 2021 15:44:02 +0800</pubDate>
+      <title>「Algorithm」02 Data Structure</title>
+      <link>https://imingx.github.io/posts/algorithm_02/</link>
+      <pubDate>Tue, 12 Oct 2021 12:44:02 +0800</pubDate>
       
-      <guid>https://imingx.github.io/posts/3/</guid>
+      <guid>https://imingx.github.io/posts/algorithm_02/</guid>
       <description>链表与邻接表：树与图的存储 栈与队列：单调队列、单调栈 kmp Trie 并查集 堆 Hash表  链表与邻接表：树与图的存储 用数组来模拟这些结构，不适用struct和STL。目的是为了提高效率
 1 2 3 4 5 6 7  struct Node { int val; Node * next; }; Node * p = new Node();   面试题较多，但是new一个节点是比较慢的，做题不需要。
 用数组模拟单链表 最常用的邻接表，存储图和树。它们都是用邻接表存储的。
@@ -46,15 +46,6 @@
       
       <guid>https://imingx.github.io/about/</guid>
       <description>1  new new nwe   </description>
-    </item>
-    
-    <item>
-      <title>S</title>
-      <link>https://imingx.github.io/posts/s/</link>
-      <pubDate>Sat, 02 Oct 2021 15:53:39 +0800</pubDate>
-      
-      <guid>https://imingx.github.io/posts/s/</guid>
-      <description>1 2 3 4 5 6 7  #include&amp;lt;iostream&amp;gt;using namespace std; int main(){ return 0; }   </description>
     </item>
     
     

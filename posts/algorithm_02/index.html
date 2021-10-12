@@ -1,0 +1,2433 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>「Algorithm」02 Data Structure | Blog</title>
+<meta name="keywords" content="" />
+<meta name="description" content="链表与邻接表：树与图的存储 栈与队列：单调队列、单调栈 kmp Trie 并查集 堆 Hash表  链表与邻接表：树与图的存储 用数组来模拟这些结构，不适用struct和STL。目的是为了提高效率
+1 2 3 4 5 6 7  struct Node { int val; Node * next; }; Node * p = new Node();   面试题较多，但是new一个节点是比较慢的，做题不需要。
+用数组模拟单链表 最常用的邻接表，存储图和树。它们都是用邻接表存储的。
+以上是用数组e[N]和数组ne[N]来模拟单链表，如果是不存在，那么取-1。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  #include&lt;iostream&gt; using namespace std; const int N = 1e5 &#43; 10; // head 表示头结点的下标 // e[i]是节点i的值 // ne[i] 是节点i的next指针 // idx是一个指针，指向当前用到的点。 int head, e[N], ne[N], idx; void init() { head = -1; idx = 0; } //将x插入到头结点 void add_to_head(int x) { e[idx] = x, ne[idx] = head, head = idx, idx &#43;&#43;; } //将x插入到下标是k的点的后面 void add(int k, int x) { e[idx] = x, ne[idx] = ne[k], ne[k] = idx, idx &#43;&#43;; } //删除k后面的节点 void remove(int k) { ne[k] = ne[ne[k]]; } int main() { int m; cin &gt;&gt; m; init(); while ( m --) { int k, x; char op; cin &gt;&gt; op; if (op == &#39;H&#39;) { cin &gt;&gt; x; add_to_head(x); } else if( op == &#39;D&#39;) { cin &gt;&gt; k; if (k == 0) head = ne[head]; else remove(k - 1); }else { cin &gt;&gt; k &gt;&gt; x; add(k - 1, x); } } for (int i = head; i !">
+<meta name="author" content="">
+<link rel="canonical" href="https://imingx.github.io/posts/algorithm_02/" />
+<link crossorigin="anonymous" href="/assets/css/stylesheet.min.83c4eb6d61e6a4176992e4a4ce8786fc30bd40032ba8663ec5d11e285a965766.css" integrity="sha256-g8TrbWHmpBdpkuSkzoeG/DC9QAMrqGY&#43;xdEeKFqWV2Y=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://imingx.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://imingx.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://imingx.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://imingx.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://imingx.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<meta name="generator" content="Hugo 0.84.4" />
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="「Algorithm」02 Data Structure" />
+<meta property="og:description" content="链表与邻接表：树与图的存储 栈与队列：单调队列、单调栈 kmp Trie 并查集 堆 Hash表  链表与邻接表：树与图的存储 用数组来模拟这些结构，不适用struct和STL。目的是为了提高效率
+1 2 3 4 5 6 7  struct Node { int val; Node * next; }; Node * p = new Node();   面试题较多，但是new一个节点是比较慢的，做题不需要。
+用数组模拟单链表 最常用的邻接表，存储图和树。它们都是用邻接表存储的。
+以上是用数组e[N]和数组ne[N]来模拟单链表，如果是不存在，那么取-1。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  #include&lt;iostream&gt; using namespace std; const int N = 1e5 &#43; 10; // head 表示头结点的下标 // e[i]是节点i的值 // ne[i] 是节点i的next指针 // idx是一个指针，指向当前用到的点。 int head, e[N], ne[N], idx; void init() { head = -1; idx = 0; } //将x插入到头结点 void add_to_head(int x) { e[idx] = x, ne[idx] = head, head = idx, idx &#43;&#43;; } //将x插入到下标是k的点的后面 void add(int k, int x) { e[idx] = x, ne[idx] = ne[k], ne[k] = idx, idx &#43;&#43;; } //删除k后面的节点 void remove(int k) { ne[k] = ne[ne[k]]; } int main() { int m; cin &gt;&gt; m; init(); while ( m --) { int k, x; char op; cin &gt;&gt; op; if (op == &#39;H&#39;) { cin &gt;&gt; x; add_to_head(x); } else if( op == &#39;D&#39;) { cin &gt;&gt; k; if (k == 0) head = ne[head]; else remove(k - 1); }else { cin &gt;&gt; k &gt;&gt; x; add(k - 1, x); } } for (int i = head; i !" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://imingx.github.io/posts/algorithm_02/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-10-12T12:44:02&#43;08:00" />
+<meta property="article:modified_time" content="2021-10-12T12:44:02&#43;08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="「Algorithm」02 Data Structure"/>
+<meta name="twitter:description" content="链表与邻接表：树与图的存储 栈与队列：单调队列、单调栈 kmp Trie 并查集 堆 Hash表  链表与邻接表：树与图的存储 用数组来模拟这些结构，不适用struct和STL。目的是为了提高效率
+1 2 3 4 5 6 7  struct Node { int val; Node * next; }; Node * p = new Node();   面试题较多，但是new一个节点是比较慢的，做题不需要。
+用数组模拟单链表 最常用的邻接表，存储图和树。它们都是用邻接表存储的。
+以上是用数组e[N]和数组ne[N]来模拟单链表，如果是不存在，那么取-1。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  #include&lt;iostream&gt; using namespace std; const int N = 1e5 &#43; 10; // head 表示头结点的下标 // e[i]是节点i的值 // ne[i] 是节点i的next指针 // idx是一个指针，指向当前用到的点。 int head, e[N], ne[N], idx; void init() { head = -1; idx = 0; } //将x插入到头结点 void add_to_head(int x) { e[idx] = x, ne[idx] = head, head = idx, idx &#43;&#43;; } //将x插入到下标是k的点的后面 void add(int k, int x) { e[idx] = x, ne[idx] = ne[k], ne[k] = idx, idx &#43;&#43;; } //删除k后面的节点 void remove(int k) { ne[k] = ne[ne[k]]; } int main() { int m; cin &gt;&gt; m; init(); while ( m --) { int k, x; char op; cin &gt;&gt; op; if (op == &#39;H&#39;) { cin &gt;&gt; x; add_to_head(x); } else if( op == &#39;D&#39;) { cin &gt;&gt; k; if (k == 0) head = ne[head]; else remove(k - 1); }else { cin &gt;&gt; k &gt;&gt; x; add(k - 1, x); } } for (int i = head; i !"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://imingx.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "「Algorithm」02 Data Structure",
+      "item": "https://imingx.github.io/posts/algorithm_02/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "「Algorithm」02 Data Structure",
+  "name": "「Algorithm」02 Data Structure",
+  "description": "链表与邻接表：树与图的存储 栈与队列：单调队列、单调栈 kmp Trie 并查集 堆 Hash表  链表与邻接表：树与图的存储 用数组来模拟这些结构，不适用struct和STL。目的是为了提高效率\n1 2 3 4 5 6 7  struct Node { int val; Node * next; }; Node * p = new Node();   面试题较多，但是new一个节点是比较慢的，做题不需要。\n用数组模拟单链表 最常用的邻接表，存储图和树。它们都是用邻接表存储的。\n以上是用数组e[N]和数组ne[N]来模拟单链表，如果是不存在，那么取-1。\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  #include\u0026lt;iostream\u0026gt; using namespace std; const int N = 1e5 + 10; // head 表示头结点的下标 // e[i]是节点i的值 // ne[i] 是节点i的next指针 // idx是一个指针，指向当前用到的点。 int head, e[N], ne[N], idx; void init() { head = -1; idx = 0; } //将x插入到头结点 void add_to_head(int x) { e[idx] = x, ne[idx] = head, head = idx, idx ++; } //将x插入到下标是k的点的后面 void add(int k, int x) { e[idx] = x, ne[idx] = ne[k], ne[k] = idx, idx ++; } //删除k后面的节点 void remove(int k) { ne[k] = ne[ne[k]]; } int main() { int m; cin \u0026gt;\u0026gt; m; init(); while ( m --) { int k, x; char op; cin \u0026gt;\u0026gt; op; if (op == \u0026#39;H\u0026#39;) { cin \u0026gt;\u0026gt; x; add_to_head(x); } else if( op == \u0026#39;D\u0026#39;) { cin \u0026gt;\u0026gt; k; if (k == 0) head = ne[head]; else remove(k - 1); }else { cin \u0026gt;\u0026gt; k \u0026gt;\u0026gt; x; add(k - 1, x); } } for (int i = head; i !",
+  "keywords": [
+    
+  ],
+  "articleBody": " 链表与邻接表：树与图的存储 栈与队列：单调队列、单调栈 kmp Trie 并查集 堆 Hash表  链表与邻接表：树与图的存储 用数组来模拟这些结构，不适用struct和STL。目的是为了提高效率\n1 2 3 4 5 6 7  struct Node { int val; Node * next; }; Node * p = new Node();   面试题较多，但是new一个节点是比较慢的，做题不需要。\n用数组模拟单链表 最常用的邻接表，存储图和树。它们都是用邻接表存储的。\n以上是用数组e[N]和数组ne[N]来模拟单链表，如果是不存在，那么取-1。\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  #include using namespace std; const int N = 1e5 + 10; // head 表示头结点的下标 // e[i]是节点i的值 // ne[i] 是节点i的next指针 // idx是一个指针，指向当前用到的点。 int head, e[N], ne[N], idx; void init() { head = -1; idx = 0; } //将x插入到头结点 void add_to_head(int x) { e[idx] = x, ne[idx] = head, head = idx, idx ++; } //将x插入到下标是k的点的后面 void add(int k, int x) { e[idx] = x, ne[idx] = ne[k], ne[k] = idx, idx ++; } //删除k后面的节点 void remove(int k) { ne[k] = ne[ne[k]]; } int main() { int m; cin  m; init(); while ( m --) { int k, x; char op; cin  op; if (op == 'H') { cin  x; add_to_head(x); } else if( op == 'D') { cin  k; if (k == 0) head = ne[head]; else remove(k - 1); }else { cin  k  x; add(k - 1, x); } } for (int i = head; i != -1; i = ne[i]) cout  e[i]  \" \"; return 0; }   用数组模拟双链表 用来优化某些问题。\nint l[N], r[N];，让0是head，1是tail\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44  #include using namespace std; const int N = 100010; int m; int e[N], l[N], r[N], idx; void init() { //0表示左端点，1表示右端点  r[0] = 1; l[1] = 0; idx = 2; } void add(int k, int x) { //在k的右边插入x  e[idx] = x; r[idx] = r[k]; l[idx] = k; l[r[k]] = idx; r[k] = idx; idx ++; //如果想插入左边，只要add(l[k], x) } void remove(int k) { r[l[k]] = r[k]; l[r[k]] = l[k]; } int main() { cin  m; }   邻接表，就是n个单链表.\n栈与队列 栈就是先进后出。\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31  #include using namespace std; const int N = 100010; int stk[N], tt; int main() { 初始化 //tt = -1;  入栈 //stk[ ++ tt] = x;  出栈 // return stk[tt --];  空 //if (tt = 0) return true;  //else return false;  栈顶 //stk[tt]; } 实际上，令tt = 0初始化，更简洁。 判空时，只要 if (tt  0) return true; // if(tt) return true; \telse return false;   队列：\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15  int q[N], hh = 0, tt = -1; //hh是队头， tt是队尾。队尾插入，队头弹出  //插入 q[ ++ tt] = x; //弹出： return q[hh ++]; if( hh  tt) not empty; else empty; 取出队头队尾元素： return q[hh]; return q[tt];   考验记忆力和毅力（自制力）。\n单调栈： 给定一个序列，求序列中的每一个数，离他最近的左边比他小的数。否则为-1。\n我们设置一个栈，对于每个x，之前的元素，应该让stk[tt] ≥ x的都出栈。\n这样x再入栈，就是一个单调递增的栈序列。而找到最小的，只要找到x入栈前的栈顶即可。\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28  #include using namespace std; const int N = 1e5 + 10; int n; int stk[N], tt; int main() { cin  n; for(int i = 0; i  n; ++ i) { int x; cin  x; while(tt \u0026\u0026 stk[tt] = x) tt --; if (tt) cout  stk[tt]  \" \"; else cout  -1  \" \"; stk[++tt] = x; } return 0; } //这个算法，每个元素都最多入栈和出栈一次，所以复杂度是O（n）   单调队列 https://www.acwing.com/problem/content/156/滑动窗口\n一个序列，在一个窗口内，算出其最大值和最小值，窗口逐渐向右移动。\n在一个窗口内，如果右边的元素比左边的元素小，\n 首先考虑暴力怎么做。 然后考虑在窗口移动的时候，怎样删除一些无用的元素。  如果不开O2优化，那么数组比STL快一些。\nO3优化\n1  #pragma GCC optimize(2)   1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48  #include using namespace std; const int N = 1e6 + 10; int a[N], q[N]; //q是下标，也就是队列，a只是记录的值a[q[i]]是取下标的值。 int n, k; int main() { cin  n  k; for(int i = 0; i  n; ++ i) { scanf(\"%d\", \u0026a[i]); } int hh = 0, tt = -1; for(int i = 0; i  n; i ++) { //判断队头是否已经出窗口  if (hh  tt \u0026\u0026 i - k + 1  q[hh]) { ++ hh; } //形成一个单调递增的序列。  while(hh  tt \u0026\u0026 a[q[tt]] = a[i]) tt --; q[++tt] = i; if (i = k - 1) printf(\"%d \", a[q[hh]]); } puts(\"\"); hh = 0, tt = -1; for(int i = 0; i  n; ++ i) { if( hh  tt \u0026\u0026 i - q[hh] + 1  k) ++ hh; while( hh  tt \u0026\u0026 a[q[tt]]  a[i]) tt --; q[++tt] = i; if (i = k - 1) printf(\"%d \", a[q[hh]]); } }   KMP  暴力算法怎么做？ 如何去优化。  朴素算法：\n S[N]→ p[M] for(int i = 1; i ≤ n; ++i)\nbool flag = true;\nint t = i;\nfor(int j = 1; j ≤ m; j++, t++)\nif (s[t] ≠ p[j])\n{\nflag = false;\nbreak;\n}\n KMP解释（以1开始）\nnext数组表示，next[i] = j，表示p[1, j] = p[ i - j + 1, i]\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42  #include#include using namespace std; const int N = 100010, M = 1000010; int n, m; char p[N], s[M]; int ne[N]; int main() { cin  n  p + 1  m  s + 1; //index from 1  // 求Next  for(int i = 2, j = 0; i  n; ++ i) { //每次都比较 j+1与i，到最后之前，可以保证1-j已经是匹配的。除非j = 0  while(j \u0026\u0026 p[i] != p[ j + 1]) j = ne[j]; if(p[i] == p[j+1]) j++; ne[i] = j; //前j个（1-j）的元素与[i-j +1, i]的元素匹配，所以ne[i] = j  } for(int i = 1, j = 0; i m ; ++ i) { while(j \u0026\u0026 s[i] != p[ j + 1]) j = ne[j]; if( s[i] == p[j+1]) j++; if(j == n)//前n个元素已经匹配  { //匹配成功  printf(\"%d \", i - n ); j = ne[j]; } } return 0; }   Trie树 高效地存储和查找字符串，集合的数据结构\n比如：\n abcdef abdef aced bcdf bcff cdaa dcdc\n 当数量过大，可以使用二进制来表示。比如考虑汉字，直接找其二进制100000101010,每一步仅考虑1和0.\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47  #include#include using namespace std; const int N = 100010; int son[N][26], cnt[N], idx; //下标是0的点，既是根节点，又是空节点 char str[N]; void insert(char str[]) { int p = 0; for(int i = 0; str[i]; ++i){ int u = str[i] - 'a'; if (!son[p][u]) son[p][u] = ++ idx; p = son[p][u]; } cnt[p] ++; } int query(char str[]) { int p = 0; for(int i = 0; str[i]; ++i) { int u = str[i] - 'a'; if(!son[p][u]) return 0; p = son[p][u]; } return cnt[p]; } int main() { int n; cin  n; while(n--) { char op[2]; cin  op  str; if (op[0] == 'I') insert(str); else cout  query(str)  endl; } return 0; }   并查集 面试和比赛，非常容易出的数据结构。\n用来快速的处理：\n 将两个集合合并 询问两个元素是否在一个集合当中  belong[x] = a，存储x属于集合a。\n近乎O（1）的支持上面的两个操作。\n基本原理：每个集合用一棵树来表示，树根的编号就是整个集合的编号，每个节点存储它的父节点，p[x] 表示父节点。\n 问题1： 如何判断树根 p== x, x就是集合的编号 问题2：如何求x的集合编号，while(p! = x) x = p 问题3：如何合并两个集合：假设px是x的集合的编号，py是y的集合的编号，那么p= y;  并查集的优化：\n （路径压缩）, 每次查询其父节点，只要直接指向其祖宗节点。  合并集合\nhttps://www.acwing.com/problem/content/838/\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36  #include#include using namespace std; const int N = 1e5 + 10; int p[N]; int n, m; int find(int x) //返回x的祖宗节点，加上路径压缩 { if(p[x] != x) p[x] = find(p[x]); return p[x]; } int main() { cin  n  m; for(int i = 1; i n ; ++ i) p[i] = i; while(m --) { char op[2]; //建议读入一个字符，也要使用字符串，自动过滤空格和回车  int a, b; cin  op  a  b; if(op[0] == 'M') p[find(a)] = find(b); else { if(find(a) == find(b)) puts(\"Yes\"); else puts(\"No\"); } } }   连通块中点的数量https://www.acwing.com/problem/content/839/\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53  #include#include using namespace std; const int N = 1e5 + 10; //如何查询每个联通块的数量？维护根节点的size即可。 int p[N], siz[N]; int n, m; int find(int x) //返回x的祖宗节点，加上路径压缩 { if(p[x] != x) p[x] = find(p[x]); return p[x]; } int main() { cin  n  m; for(int i = 1; i n ; ++ i) { p[i] = i; siz[i] = 1; } while(m --) { char op[5]; //建议读入一个字符，也要使用字符串，自动过滤空格和回车  int a, b; cin  op; if(op[0] == 'C') { cin  a  b; if(find(a) != find(b)) siz[find(b)] += siz[find(a)]; p[find(a)] = find(b); } else if (op[1] == '1') { cin  a  b; if(find(a) == find(b)) puts(\"Yes\"); else puts(\"No\"); } else { cin  a; cout  siz[find(a)]  endl; } } }   堆 如何手写一个堆？\n 插入一个数 求集合当中的最小值 删除最小值 删除任意一个元素 修改任意一个元素  堆的基本结构：\n是一棵二叉树。是一棵完全二叉树。\n以小顶堆为例，每个节点的左右子节点都大于该节点的值。\n使用一个一维数组存放堆。\n1号点是根节点，x的左儿子是2x，右子节点是2x+1。\n操作：\n down(x)，往下调整x。每次找这个节点和两个子节点的最小值，然后交换即可。 up(x)，往上调整x。每次往上和父节点比较，需要交换时交换即可。  怎么插入x？\n heap[ ++ idx] = x; up(x);  最小值：\n heap[1]  删除最小值：\n heap[1] = heap[idx]; idx—; down(1);  删除任意元素\n heap[k] = heap[size], size—; down(k); up(k);  修改元素：\n heap[k] = x; down(k); up(k);  1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55  #include#include using namespace std; const int N = 100010; int n, m; int h[N], idx; void down(int u) { int t = u; if (u * 2  idx \u0026\u0026 h[u * 2]  h[t]) t = u * 2; if (u * 2 + 1  idx \u0026\u0026 h[u*2 +1]  h[t]) t = u*2 + 1; if(u!=t){ swap(h[u], h[t]); down(t); } } void up(int u) { while( u / 2 \u0026\u0026 h[ u/2 ]  h[u]) { swap(h[u/2], h[u]); u/=2; } } int main() { cin  n  m; for(int i = 1; i  n; ++ i) scanf(\"%d\", \u0026h[i]); idx = n; for(int i = n/2; i ; -- i) down(i); /*这是建立堆的过程 为什么从n/2开始down？ n/2的子孩子是最后一个元素，是完全二叉树的倒数第二层，所以这样一直递归 的做就好，而且时间复杂度是O(n); */ while(m--) { printf(\"%d \", h[1]); h[1] = h[idx]; idx --; down(1); } return 0; }   带映射版的堆操作:\nhttps://www.acwing.com/problem/content/841/\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87  #include#include#include using namespace std; const int N = 100010; int n; int h[N], ph[N], hp[N], idx; //ph存放插入的第k个元素在堆的下标位置 //hp存放的是堆中第j个元素在ph数组的位置索引。 //ph和hp是互为反函数。  void heap_swap(int a, int b) { swap(ph[hp[a]], ph[hp[b]]); swap(hp[a], hp[b]); swap(h[a], h[b]); } void down(int u) { int t = u; if (u * 2  idx \u0026\u0026 h[u * 2]  h[t]) t = u * 2; if (u * 2 + 1  idx \u0026\u0026 h[u*2 +1]  h[t]) t = u*2 + 1; if(u!=t){ heap_swap(u, t); down(t); } } void up(int u) { while( u / 2 \u0026\u0026 h[ u/2 ]  h[u]) { heap_swap(u/2, u); u/=2; } } int main() { cin  n; int m = 0; //m是第m个插入的元素。  while(n --) { char op[10]; int k, x; cin  op; if (!strcmp(op, \"I\")) { cin  x; idx ++; m ++; ph[m] = idx; hp[idx] = m; h[idx] = x; up(idx); } else if (!strcmp(op, \"PM\")) cout  h[1]  endl; else if (!strcmp(op, \"DM\")) { heap_swap(1, idx); idx --; down(1); } else if(!strcmp(op, \"D\")) { cin  k; k = ph[k]; heap_swap(k, idx); idx --; down(k), up(k); } else { cin  k  x; k = ph[k]; h[k] = x; down(k), up(k); } } return 0; }   find()和cnt()可以改成，get()和cnt()保证不编译错误，compile ERROR。\nHash表   哈希表的存储结构，认为是O(1). 如果要删除，只要开个数组标记一下。\n  开放寻址法\n  拉链法\n  常见情景： 把0-10^9的数映射到0-10^5的数组。\nx mod 10 ^ 5 附近的质数。然后处理冲突。100003.\n和离散化比较，离散是需要保序的。\n  常用的字符串的哈希方式。\n  1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57  //拉链法 #include#include//有memset using namespace std; const int N = 100003; //取大于10万的最小的质数。  int h[N], e[N], ne[N], idx; void insert(int x) { int k = (x % N + N) % N; //因为有的数是负数。  e[idx] = x; //e存值  ne[idx] = h[k]; //ne存指针  h[k] = idx; idx ++; //插入头部。 } bool find(int x) { int k = (x % N + N) % N; for(int i = h[k]; i != -1; i = ne[i]) { if(e[i] == x) return true; } return false; } int main(){ int n; memset(h, -1, sizeof h); cin  n; while(n --) { char op[2]; int x; cin  op  x; if(op[0] == 'I') insert(x); else { if (find(x)) puts(\"Yes\"); else puts(\"No\"); } } return 0; }   1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54  //开放寻址法 #include#include using namespace std; //0xf3f3f3f3是10^9级别，很大，用来初始化数组 const int N = 2e5 + 3, null = 0x3f3f3f3f; //一般取三倍。 //取质数。 int h[N]; int find(int x) { int k = (x % N + N) % N; while(h[k] != null \u0026\u0026 h[k] != x) { k ++; if(k == N) k = 0; } //这个过程一定会停止的，因为总共只有1e5个数字，而N是二倍，所以不担心满;  //结束条件时，h[k] == null 或 h[k] == x  return k; } int main(){ int n; cin  n; memset(h, 0x3f, sizeof h); while(n --) { char op[2]; int x; cin  op  x; int k = find(x); if (op[0] == 'I') { h[k] = x; } else { if (h[k] != null) puts(\"Yes\"); else puts(\"No\"); } } return 0; }   字符串前缀哈希法。\n str = “ABCDEF” h[1] = “A” // 前1个 h[2] = “AB”\n 即处理前缀的hash，h[0] = 0\n如果对字符串进行哈希？当成p进制数，a * p ^ 3 + b * p * 2 ……;再取模Q。\n不能把字母映射成0.\n那么前缀哈希值有什么用呢？因为我们已经知道 h[L]到h[R]的哈希值\n所以求L - R的哈希值，只要 h[R] - h[L - 1] * p ^ {R-L+1};\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45  #include#include using namespace std; typedef unsigned long long ULL; const int N = 100010, P = 131; int n, m; char str[N]; ULL h[N], p[N]; //p是存放P的n次方  ULL get(int l, int r) { return h[r] - h[l - 1] * p[r - l + 1]; } int main(){ cin  n  m  str + 1; p[0] = 1; for(int i = 1; i  n; ++ i) { p[i] = p[i - 1] * P; h[i] = h[i - 1] * P + str[i]; } while( m --) { int l1, r1, l2, r2; cin  l1  r1  l2  r2; if(get(l1, r1) == get(l2, r2)) { puts(\"Yes\"); } else { puts(\"No\"); } } return 0; }   hash算法求两个字符串相同比KMP更好\nKMP更适合循环节。\nC++STL使用 1 2 3 4 5 6 7 8 9 10 11 12 13  vector 可变长数组，倍增的思想 string 处理字符串的利器，substr(), c_str() queue, 队列，进行push(),front(), pop() priority_queue，优先队列，堆，push(), top(), pop() stack 栈，Push(), top(), pop() deque 双端队列 set, map, multiset, multimap 基于平衡二叉树（红黑树）动态维护有序序列 unordered_set, unordered_map, unordered_multiset, unordered_multimap 哈希表 bitset;压位 list用的不多。   vector: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37  #include#include#include#include#include using namespace std; int main() { vectorint a(10, 3); vectorint b[10]; //定义数组  //定义一个长度为10的，初始值为3的vector  //for(auto x : a) cout  a.size(); //O(1)  a.empty(); a.clear();//清空  /*系统分配空间时，所需时间与空间大小无关，与申请次数有关！！！ 所以尽量减少申请空间的次数。 vector最初分配32的空间，然后如果不够，分配64，然后copy过去之前的元素。 申请长度为2 ^ n的数组，那么需要copy(1 + 2 + 2^n-1) = 2^n可以认为是O(1) 申请空间的次数是log(2^n) = n */ a.front(); a.back(); a.push_back(); a.pop_back(); begin(); end(); []; a  b可以判断两个vector的大小，按字典序比。 return 0; }   下面是模板 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124  C++ STL简介 vector, 变长数组，倍增的思想 size() 返回元素个数 empty() 返回是否为空 clear() 清空 front()/back() push_back()/pop_back() begin()/end() [] 支持比较运算，按字典序 pairint, intp; first, 第一个元素 second, 第二个元素 支持比较运算，以first为第一关键字，以second为第二关键字（字典序） p = make_pair(10, 2); p = {10, 2}; pairint, pairint, intp;存三个 string，字符串 size()/length() 返回字符串长度 empty() clear() substr(起始下标，(子串长度)) 返回子串 c_str() 返回字符串所在字符数组的起始地址 用于用printf输出 支持加运算： string a = \"1\"; a += \"bcd\"; queue, 队列 size() empty() push() 向队尾插入一个元素 front() 返回队头元素 back() 返回队尾元素 pop() 弹出队头元素 priority_queue, 优先队列，默认是大顶堆 size() empty() push() 插入一个元素 top() 返回堆顶元素 pop() 弹出堆顶元素 定义成小顶堆的方式： priority_queueint, vectorint, greaterint q; priority_queueint heap; 可以通过插入-x实现小顶堆。 stack, 栈 size() empty() push() 向栈顶插入一个元素 top() 返回栈顶元素 pop() 弹出栈顶元素 deque, 双端队列，加强版vector，效率低，尽量不用 size() empty() clear() front()/back() push_back()/pop_back() push_front()/pop_front() begin()/end() 迭代器 [] 支持直接索引 set, map, multiset, multimap, 基于平衡二叉树（红黑树），动态维护有序序列 size() empty() clear() begin()/end() ++, -- 返回前驱和后继，时间复杂度 O(logn) set/multiset set不允许重复元素 insert() 插入一个数 find() 查找一个数，返回迭代器，找不到返回end迭代器 count() 返回某一个数的个数 erase() (1) 输入是一个数x，删除所有x O(k + logn) (2) 输入一个迭代器，删除这个迭代器 lower_bound()/upper_bound() lower_bound(x) 返回大于等于x的最小的数的迭代器 upper_bound(x) 返回大于x的最小的数的迭代器 map/multimap insert() 插入的数是一个pair erase() 输入的参数是pair或者迭代器 find() [] 注意multimap不支持此操作。 时间复杂度是 O(logn) lower_bound()/upper_bound() mapstring ,int a; a[\"yxc\"] = 1; cout  a[\"yec\"]  endl; unordered_set, unordered_map, unordered_multiset, unordered_multimap, 哈希表 和上面类似，增删改查的时间复杂度是 O(1) 不支持 lower_bound()/upper_bound()， 迭代器的++，--. bitset, 圧位 是bool数组的1/8。🐂 bitset10000 s; ~s; ~, \u0026, |, ^ ,  ==, != [] count() 返回有多少个1 any() 判断是否至少有一个1 none() 判断是否全为0 set() 把所有位置成1 set(k, v) 将第k位变成v reset() 把所有位变成0 flip() 等价于~ flip(k) 把第k位取反 作者：yxc 链接：https://www.acwing.com/blog/content/404/ 来源：AcWing   ",
+  "wordCount" : "3126",
+  "inLanguage": "en",
+  "datePublished": "2021-10-12T12:44:02+08:00",
+  "dateModified": "2021-10-12T12:44:02+08:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://imingx.github.io/posts/algorithm_02/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://imingx.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://imingx.github.io/" accesskey="h" title="Blog (Alt + H)">Blog</a>
+            <span class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </span>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://imingx.github.io/posts/" title="Post">
+                    <span>Post</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://imingx.github.io/archive/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://imingx.github.io/categories/" title="Cat">
+                    <span>Cat</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://imingx.github.io/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      「Algorithm」02 Data Structure
+    </h1>
+    <div class="post-meta">October 12, 2021
+</div>
+  </header> <div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e9%93%be%e8%a1%a8%e4%b8%8e%e9%82%bb%e6%8e%a5%e8%a1%a8%e6%a0%91%e4%b8%8e%e5%9b%be%e7%9a%84%e5%ad%98%e5%82%a8" aria-label="链表与邻接表：树与图的存储">链表与邻接表：树与图的存储</a><ul>
+                        
+                <li>
+                    <a href="#%e7%94%a8%e6%95%b0%e7%bb%84%e6%a8%a1%e6%8b%9f%e5%8d%95%e9%93%be%e8%a1%a8" aria-label="用数组模拟单链表">用数组模拟单链表</a></li>
+                <li>
+                    <a href="#%e7%94%a8%e6%95%b0%e7%bb%84%e6%a8%a1%e6%8b%9f%e5%8f%8c%e9%93%be%e8%a1%a8" aria-label="用数组模拟双链表">用数组模拟双链表</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e6%a0%88%e4%b8%8e%e9%98%9f%e5%88%97" aria-label="栈与队列">栈与队列</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8d%95%e8%b0%83%e6%a0%88" aria-label="单调栈：">单调栈：</a></li>
+                <li>
+                    <a href="#%e5%8d%95%e8%b0%83%e9%98%9f%e5%88%97" aria-label="单调队列">单调队列</a></li></ul>
+                </li>
+                <li>
+                    <a href="#kmp" aria-label="KMP">KMP</a></li>
+                <li>
+                    <a href="#trie%e6%a0%91" aria-label="Trie树">Trie树</a></li>
+                <li>
+                    <a href="#%e5%b9%b6%e6%9f%a5%e9%9b%86" aria-label="并查集">并查集</a></li>
+                <li>
+                    <a href="#%e5%a0%86" aria-label="堆">堆</a></li>
+                <li>
+                    <a href="#hash%e8%a1%a8" aria-label="Hash表">Hash表</a></li>
+                <li>
+                    <a href="#cstl%e4%bd%bf%e7%94%a8" aria-label="C&#43;&#43;STL使用">C++STL使用</a><ul>
+                        
+                <li>
+                    <a href="#vector" aria-label="vector:">vector:</a></li>
+                <li>
+                    <a href="#%e4%b8%8b%e9%9d%a2%e6%98%af%e6%a8%a1%e6%9d%bf" aria-label="下面是模板">下面是模板</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><ul>
+<li>链表与邻接表：树与图的存储</li>
+<li>栈与队列：单调队列、单调栈</li>
+<li>kmp</li>
+<li>Trie</li>
+<li>并查集</li>
+<li>堆</li>
+<li>Hash表</li>
+</ul>
+<h1 id="链表与邻接表树与图的存储">链表与邻接表：树与图的存储<a hidden class="anchor" aria-hidden="true" href="#链表与邻接表树与图的存储">#</a></h1>
+<p>用数组来模拟这些结构，不适用struct和STL。目的是为了提高效率</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">struct</span> <span style="color:#268bd2">Node</span>
+{
+		<span style="color:#dc322f">int</span> val;
+		Node <span style="color:#719e07">*</span> next;
+};
+
+Node <span style="color:#719e07">*</span> p <span style="color:#719e07">=</span> <span style="color:#719e07">new</span> Node();
+</code></pre></td></tr></table>
+</div>
+</div><p>面试题较多，但是new一个节点是比较慢的，做题不需要。</p>
+<h2 id="用数组模拟单链表">用数组模拟单链表<a hidden class="anchor" aria-hidden="true" href="#用数组模拟单链表">#</a></h2>
+<p>最常用的邻接表，存储图和树。它们都是用邻接表存储的。</p>
+<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/527e8a74-c5eb-4449-a943-46082b744d38/Untitled.png" alt="Untitled"  />
+</p>
+<p>以上是用数组e[N]和数组ne[N]来模拟单链表，如果是不存在，那么取-1。</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">54
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">55
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">56
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">57
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">58
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">59
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">60
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">61
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">62
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">63
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">64
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">65
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">66
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">67
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">68
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">69
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">70
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07"></span>
+<span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std; 
+
+<span style="color:#719e07">const</span> <span style="color:#dc322f">int</span> N <span style="color:#719e07">=</span> <span style="color:#2aa198">1e5</span> <span style="color:#719e07">+</span> <span style="color:#2aa198">10</span>;
+
+<span style="color:#586e75">// head 表示头结点的下标
+</span><span style="color:#586e75">// e[i]是节点i的值
+</span><span style="color:#586e75">// ne[i] 是节点i的next指针
+</span><span style="color:#586e75">// idx是一个指针，指向当前用到的点。
+</span><span style="color:#586e75"></span><span style="color:#dc322f">int</span> head, e[N], ne[N], idx;
+
+<span style="color:#dc322f">void</span> <span style="color:#268bd2">init</span>()
+{
+    head <span style="color:#719e07">=</span> <span style="color:#719e07">-</span><span style="color:#2aa198">1</span>;
+    idx <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>;    
+}
+
+<span style="color:#586e75">//将x插入到头结点
+</span><span style="color:#586e75"></span><span style="color:#dc322f">void</span> <span style="color:#268bd2">add_to_head</span>(<span style="color:#dc322f">int</span> x)
+{
+    e[idx] <span style="color:#719e07">=</span> x, ne[idx] <span style="color:#719e07">=</span> head, head <span style="color:#719e07">=</span> idx, idx <span style="color:#719e07">++</span>;
+}
+
+<span style="color:#586e75">//将x插入到下标是k的点的后面
+</span><span style="color:#586e75"></span><span style="color:#dc322f">void</span> <span style="color:#268bd2">add</span>(<span style="color:#dc322f">int</span> k, <span style="color:#dc322f">int</span> x)
+{
+    e[idx] <span style="color:#719e07">=</span> x, ne[idx] <span style="color:#719e07">=</span> ne[k], ne[k] <span style="color:#719e07">=</span> idx, idx <span style="color:#719e07">++</span>;   
+}
+
+<span style="color:#586e75">//删除k后面的节点
+</span><span style="color:#586e75"></span><span style="color:#dc322f">void</span> <span style="color:#268bd2">remove</span>(<span style="color:#dc322f">int</span> k)
+{
+    ne[k] <span style="color:#719e07">=</span> ne[ne[k]];
+}
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">main</span>()
+{
+    <span style="color:#dc322f">int</span> m;
+    cin <span style="color:#719e07">&gt;&gt;</span> m;
+    
+    init();
+    <span style="color:#719e07">while</span> ( m <span style="color:#719e07">--</span>)
+    {
+        <span style="color:#dc322f">int</span> k, x;
+        <span style="color:#dc322f">char</span> op;
+        
+        cin <span style="color:#719e07">&gt;&gt;</span> op;
+        <span style="color:#719e07">if</span> (op <span style="color:#719e07">==</span> <span style="color:#2aa198">&#39;H&#39;</span>)
+        {
+            cin <span style="color:#719e07">&gt;&gt;</span> x;
+            add_to_head(x);
+        }
+        <span style="color:#719e07">else</span> <span style="color:#719e07">if</span>( op <span style="color:#719e07">==</span>  <span style="color:#2aa198">&#39;D&#39;</span>)
+        {
+            cin <span style="color:#719e07">&gt;&gt;</span> k;
+            <span style="color:#719e07">if</span> (k <span style="color:#719e07">==</span> <span style="color:#2aa198">0</span>) head <span style="color:#719e07">=</span> ne[head];
+            <span style="color:#719e07">else</span> remove(k <span style="color:#719e07">-</span> <span style="color:#2aa198">1</span>);
+        }<span style="color:#719e07">else</span> {
+            cin <span style="color:#719e07">&gt;&gt;</span> k <span style="color:#719e07">&gt;&gt;</span> x;
+            add(k <span style="color:#719e07">-</span> <span style="color:#2aa198">1</span>, x);
+        }
+    }
+    
+    <span style="color:#719e07">for</span> (<span style="color:#dc322f">int</span> i <span style="color:#719e07">=</span> head; i <span style="color:#719e07">!=</span> <span style="color:#719e07">-</span><span style="color:#2aa198">1</span>; i <span style="color:#719e07">=</span> ne[i])
+        cout <span style="color:#719e07">&lt;&lt;</span> e[i] <span style="color:#719e07">&lt;&lt;</span> <span style="color:#2aa198">&#34; &#34;</span>;
+    
+ 
+    <span style="color:#719e07">return</span> <span style="color:#2aa198">0</span>;   
+}
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="用数组模拟双链表">用数组模拟双链表<a hidden class="anchor" aria-hidden="true" href="#用数组模拟双链表">#</a></h2>
+<p>用来优化某些问题。</p>
+<p>int l[N], r[N];，让0是head，1是tail</p>
+<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/17c4716d-8998-42db-b3ad-ebe504d12680/Untitled.png" alt="Untitled"  />
+</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">44
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07"></span>
+<span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
+
+<span style="color:#719e07">const</span> <span style="color:#dc322f">int</span> N <span style="color:#719e07">=</span> <span style="color:#2aa198">100010</span>;
+
+<span style="color:#dc322f">int</span> m;
+<span style="color:#dc322f">int</span> e[N], l[N], r[N], idx;
+
+<span style="color:#dc322f">void</span> <span style="color:#268bd2">init</span>()
+{
+    <span style="color:#586e75">//0表示左端点，1表示右端点
+</span><span style="color:#586e75"></span>    r[<span style="color:#2aa198">0</span>] <span style="color:#719e07">=</span> <span style="color:#2aa198">1</span>;
+    l[<span style="color:#2aa198">1</span>] <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>;
+    idx <span style="color:#719e07">=</span> <span style="color:#2aa198">2</span>;
+}
+
+<span style="color:#dc322f">void</span> <span style="color:#268bd2">add</span>(<span style="color:#dc322f">int</span> k, <span style="color:#dc322f">int</span> x)
+{
+    <span style="color:#586e75">//在k的右边插入x
+</span><span style="color:#586e75"></span>    e[idx] <span style="color:#719e07">=</span> x;
+    r[idx] <span style="color:#719e07">=</span> r[k];
+    l[idx] <span style="color:#719e07">=</span> k;
+    
+    l[r[k]] <span style="color:#719e07">=</span> idx;
+    r[k] <span style="color:#719e07">=</span> idx;
+
+    idx <span style="color:#719e07">++</span>;
+    <span style="color:#586e75">//如果想插入左边，只要add(l[k], x)
+</span><span style="color:#586e75"></span>}
+
+<span style="color:#dc322f">void</span> <span style="color:#268bd2">remove</span>(<span style="color:#dc322f">int</span> k)
+{
+    r[l[k]] <span style="color:#719e07">=</span> r[k];
+    l[r[k]] <span style="color:#719e07">=</span> l[k];
+}
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">main</span>() 
+{
+    cin <span style="color:#719e07">&gt;&gt;</span> m;
+    
+    
+    
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>邻接表，就是n个单链表.</p>
+<h1 id="栈与队列">栈与队列<a hidden class="anchor" aria-hidden="true" href="#栈与队列">#</a></h1>
+<p>栈就是先进后出。</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07"></span>
+<span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
+
+<span style="color:#719e07">const</span> <span style="color:#dc322f">int</span> N <span style="color:#719e07">=</span> <span style="color:#2aa198">100010</span>;
+
+<span style="color:#dc322f">int</span> stk[N], tt;
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">main</span>()
+{
+    初始化
+    <span style="color:#586e75">//tt = -1; 
+</span><span style="color:#586e75"></span>    
+    入栈
+    <span style="color:#586e75">//stk[ ++ tt] = x;
+</span><span style="color:#586e75"></span>    
+    出栈
+    <span style="color:#586e75">// return stk[tt --];
+</span><span style="color:#586e75"></span>    
+    空
+    <span style="color:#586e75">//if (tt &gt;= 0) return true;
+</span><span style="color:#586e75"></span>    <span style="color:#586e75">//else return false;
+</span><span style="color:#586e75"></span>    
+    栈顶
+    <span style="color:#586e75">//stk[tt];
+</span><span style="color:#586e75"></span>}
+
+实际上，令tt <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>初始化，更简洁。
+
+判空时，只要 <span style="color:#719e07">if</span> (tt <span style="color:#719e07">&gt;</span> <span style="color:#2aa198">0</span>) <span style="color:#719e07">return</span> <span style="color:#b58900">true</span>; <span style="color:#586e75">// if(tt) return true;
+</span><span style="color:#586e75"></span>					<span style="color:#719e07">else</span> <span style="color:#719e07">return</span> <span style="color:#b58900">false</span>;
+</code></pre></td></tr></table>
+</div>
+</div><p>队列：</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">
+<span style="color:#dc322f">int</span> q[N], hh <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>, tt <span style="color:#719e07">=</span> <span style="color:#719e07">-</span><span style="color:#2aa198">1</span>; <span style="color:#586e75">//hh是队头， tt是队尾。队尾插入，队头弹出
+</span><span style="color:#586e75"></span>
+<span style="color:#586e75">//插入
+</span><span style="color:#586e75"></span>q[ <span style="color:#719e07">++</span> tt] <span style="color:#719e07">=</span> x;
+
+<span style="color:#586e75">//弹出：
+</span><span style="color:#586e75"></span><span style="color:#719e07">return</span> q[hh <span style="color:#719e07">++</span>];
+
+<span style="color:#719e07">if</span>( hh <span style="color:#719e07">&lt;=</span> tt) not empty;
+<span style="color:#719e07">else</span> empty;
+
+取出队头队尾元素：
+<span style="color:#719e07">return</span> q[hh];
+<span style="color:#719e07">return</span> q[tt];
+</code></pre></td></tr></table>
+</div>
+</div><p>考验记忆力和毅力（自制力）。</p>
+<h2 id="单调栈">单调栈：<a hidden class="anchor" aria-hidden="true" href="#单调栈">#</a></h2>
+<p>给定一个序列，求序列中的每一个数，离他最近的左边比他小的数。否则为-1。</p>
+<p>我们设置一个栈，对于每个x，之前的元素，应该让stk[tt] ≥ x的都出栈。</p>
+<p>这样x再入栈，就是一个单调递增的栈序列。而找到最小的，只要找到x入栈前的栈顶即可。</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07"></span>
+<span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
+
+<span style="color:#719e07">const</span> <span style="color:#dc322f">int</span> N <span style="color:#719e07">=</span> <span style="color:#2aa198">1e5</span> <span style="color:#719e07">+</span> <span style="color:#2aa198">10</span>;
+
+<span style="color:#dc322f">int</span> n;
+<span style="color:#dc322f">int</span> stk[N], tt;
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">main</span>()
+{
+    cin <span style="color:#719e07">&gt;&gt;</span> n;
+    
+    <span style="color:#719e07">for</span>(<span style="color:#dc322f">int</span> i <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>; i <span style="color:#719e07">&lt;</span> n; <span style="color:#719e07">++</span> i)
+    {
+        <span style="color:#dc322f">int</span> x;
+        cin <span style="color:#719e07">&gt;&gt;</span> x;
+        <span style="color:#719e07">while</span>(tt <span style="color:#719e07">&amp;&amp;</span> stk[tt] <span style="color:#719e07">&gt;=</span> x) tt <span style="color:#719e07">--</span>;
+        <span style="color:#719e07">if</span> (tt) cout <span style="color:#719e07">&lt;&lt;</span> stk[tt] <span style="color:#719e07">&lt;&lt;</span> <span style="color:#2aa198">&#34; &#34;</span>;
+        <span style="color:#719e07">else</span> cout <span style="color:#719e07">&lt;&lt;</span> <span style="color:#719e07">-</span><span style="color:#2aa198">1</span> <span style="color:#719e07">&lt;&lt;</span> <span style="color:#2aa198">&#34; &#34;</span>;
+        
+        stk[<span style="color:#719e07">++</span>tt] <span style="color:#719e07">=</span> x;
+    }
+    
+    
+    <span style="color:#719e07">return</span> <span style="color:#2aa198">0</span>;
+}
+<span style="color:#586e75">//这个算法，每个元素都最多入栈和出栈一次，所以复杂度是O（n）
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="单调队列">单调队列<a hidden class="anchor" aria-hidden="true" href="#单调队列">#</a></h2>
+<p><a href="https://www.acwing.com/problem/content/156/">https://www.acwing.com/problem/content/156/</a>滑动窗口</p>
+<p>一个序列，在一个窗口内，算出其最大值和最小值，窗口逐渐向右移动。</p>
+<p>在一个窗口内，如果右边的元素比左边的元素小，</p>
+<ol>
+<li>首先考虑暴力怎么做。</li>
+<li>然后考虑在窗口移动的时候，怎样删除一些无用的元素。</li>
+</ol>
+<p>如果不开O2优化，那么数组比STL快一些。</p>
+<p>O3优化</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#pragma GCC optimize(2)
+</span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/9f3fc322-fb8d-4826-b9cb-b3b007debd35/Untitled.png" alt="Untitled"  />
+</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">48
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07"></span>
+<span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
+
+<span style="color:#719e07">const</span> <span style="color:#dc322f">int</span> N <span style="color:#719e07">=</span> <span style="color:#2aa198">1e6</span> <span style="color:#719e07">+</span> <span style="color:#2aa198">10</span>;
+
+<span style="color:#dc322f">int</span> a[N], q[N];
+<span style="color:#586e75">//q是下标，也就是队列，a只是记录的值a[q[i]]是取下标的值。
+</span><span style="color:#586e75"></span><span style="color:#dc322f">int</span> n, k;
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">main</span>()
+{
+    cin <span style="color:#719e07">&gt;&gt;</span> n <span style="color:#719e07">&gt;&gt;</span> k;
+    <span style="color:#719e07">for</span>(<span style="color:#dc322f">int</span> i <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>; i <span style="color:#719e07">&lt;</span> n; <span style="color:#719e07">++</span> i)
+    {
+        scanf(<span style="color:#2aa198">&#34;%d&#34;</span>, <span style="color:#719e07">&amp;</span>a[i]);
+    }
+    
+    
+    <span style="color:#dc322f">int</span> hh <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>, tt <span style="color:#719e07">=</span> <span style="color:#719e07">-</span><span style="color:#2aa198">1</span>;
+    <span style="color:#719e07">for</span>(<span style="color:#dc322f">int</span> i <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>; i <span style="color:#719e07">&lt;</span> n; i <span style="color:#719e07">++</span>)
+    {
+        <span style="color:#586e75">//判断队头是否已经出窗口
+</span><span style="color:#586e75"></span>        <span style="color:#719e07">if</span> (hh <span style="color:#719e07">&lt;=</span> tt <span style="color:#719e07">&amp;&amp;</span> i <span style="color:#719e07">-</span> k <span style="color:#719e07">+</span> <span style="color:#2aa198">1</span> <span style="color:#719e07">&gt;</span> q[hh])
+        {
+            <span style="color:#719e07">++</span> hh;
+        }
+        
+        <span style="color:#586e75">//形成一个单调递增的序列。
+</span><span style="color:#586e75"></span>        <span style="color:#719e07">while</span>(hh <span style="color:#719e07">&lt;=</span> tt <span style="color:#719e07">&amp;&amp;</span> a[q[tt]] <span style="color:#719e07">&gt;=</span> a[i])
+            tt <span style="color:#719e07">--</span>;
+        q[<span style="color:#719e07">++</span>tt] <span style="color:#719e07">=</span> i;
+        <span style="color:#719e07">if</span> (i <span style="color:#719e07">&gt;=</span> k <span style="color:#719e07">-</span> <span style="color:#2aa198">1</span>) printf(<span style="color:#2aa198">&#34;%d &#34;</span>, a[q[hh]]);
+    }
+    
+    puts(<span style="color:#2aa198">&#34;&#34;</span>);
+    hh <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>, tt <span style="color:#719e07">=</span> <span style="color:#719e07">-</span><span style="color:#2aa198">1</span>;
+    <span style="color:#719e07">for</span>(<span style="color:#dc322f">int</span> i <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>; i <span style="color:#719e07">&lt;</span> n; <span style="color:#719e07">++</span> i)
+    {
+        <span style="color:#719e07">if</span>( hh <span style="color:#719e07">&lt;=</span> tt <span style="color:#719e07">&amp;&amp;</span> i <span style="color:#719e07">-</span> q[hh] <span style="color:#719e07">+</span> <span style="color:#2aa198">1</span> <span style="color:#719e07">&gt;</span> k)
+            <span style="color:#719e07">++</span> hh;
+        <span style="color:#719e07">while</span>( hh <span style="color:#719e07">&lt;=</span> tt <span style="color:#719e07">&amp;&amp;</span> a[q[tt]] <span style="color:#719e07">&lt;=</span> a[i])
+            tt <span style="color:#719e07">--</span>;
+         q[<span style="color:#719e07">++</span>tt] <span style="color:#719e07">=</span> i;
+        <span style="color:#719e07">if</span> (i <span style="color:#719e07">&gt;=</span> k <span style="color:#719e07">-</span> <span style="color:#2aa198">1</span>) printf(<span style="color:#2aa198">&#34;%d &#34;</span>, a[q[hh]]);
+       
+    }   
+}
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="kmp">KMP<a hidden class="anchor" aria-hidden="true" href="#kmp">#</a></h1>
+<ol>
+<li>暴力算法怎么做？</li>
+<li>如何去优化。</li>
+</ol>
+<p>朴素算法：</p>
+<blockquote>
+<p>S[N]→ p[M]
+for(int  i = 1; i ≤ n; ++i)</p>
+<p>bool flag = true;</p>
+<p>int t = i;</p>
+<p>for(int j = 1; j ≤ m; j++, t++)</p>
+<p>if (s[t] ≠ p[j])</p>
+<p>{</p>
+<p>flag = false;</p>
+<p>break;</p>
+<p>}</p>
+</blockquote>
+<p>KMP解释（以1开始）</p>
+<p>next数组表示，next[i] = j，表示p[1, j] = p[ i - j  + 1, i]</p>
+<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/db794d13-ef6f-4ed1-939c-8bebf537273c/Untitled.png" alt="Untitled"  />
+</p>
+<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/43e641ee-0294-4f5f-8b5f-c3aa28229b13/Untitled.png" alt="Untitled"  />
+</p>
+<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0a555ea3-403b-481f-acd4-92d5e522009d/Untitled.png" alt="Untitled"  />
+</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">42
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstdio&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07"></span>
+<span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
+
+<span style="color:#719e07">const</span> <span style="color:#dc322f">int</span> N <span style="color:#719e07">=</span> <span style="color:#2aa198">100010</span>, M <span style="color:#719e07">=</span> <span style="color:#2aa198">1000010</span>;
+
+<span style="color:#dc322f">int</span> n, m;
+<span style="color:#dc322f">char</span> p[N], s[M];
+<span style="color:#dc322f">int</span> ne[N];
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">main</span>() {
+    cin <span style="color:#719e07">&gt;&gt;</span> n <span style="color:#719e07">&gt;&gt;</span> p <span style="color:#719e07">+</span> <span style="color:#2aa198">1</span> <span style="color:#719e07">&gt;&gt;</span> m <span style="color:#719e07">&gt;&gt;</span> s <span style="color:#719e07">+</span> <span style="color:#2aa198">1</span>; 
+    <span style="color:#586e75">//index from 1    
+</span><span style="color:#586e75"></span>    
+    <span style="color:#586e75">// 求Next
+</span><span style="color:#586e75"></span>    <span style="color:#719e07">for</span>(<span style="color:#dc322f">int</span> i <span style="color:#719e07">=</span> <span style="color:#2aa198">2</span>, j <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>; i <span style="color:#719e07">&lt;=</span> n; <span style="color:#719e07">++</span> i)
+    {
+<span style="color:#586e75">//每次都比较 j+1与i，到最后之前，可以保证1-j已经是匹配的。除非j = 0
+</span><span style="color:#586e75"></span>        <span style="color:#719e07">while</span>(j <span style="color:#719e07">&amp;&amp;</span> p[i] <span style="color:#719e07">!=</span> p[ j <span style="color:#719e07">+</span> <span style="color:#2aa198">1</span>]) j <span style="color:#719e07">=</span> ne[j];
+        <span style="color:#719e07">if</span>(p[i] <span style="color:#719e07">==</span> p[j<span style="color:#719e07">+</span><span style="color:#2aa198">1</span>]) j<span style="color:#719e07">++</span>;
+        ne[i] <span style="color:#719e07">=</span> j;
+        <span style="color:#586e75">//前j个（1-j）的元素与[i-j +1, i]的元素匹配，所以ne[i] = j
+</span><span style="color:#586e75"></span>    }
+    
+    
+    <span style="color:#719e07">for</span>(<span style="color:#dc322f">int</span> i <span style="color:#719e07">=</span> <span style="color:#2aa198">1</span>, j <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>; i <span style="color:#719e07">&lt;=</span>m ; <span style="color:#719e07">++</span> i)
+    {
+        <span style="color:#719e07">while</span>(j <span style="color:#719e07">&amp;&amp;</span> s[i] <span style="color:#719e07">!=</span> p[ j <span style="color:#719e07">+</span> <span style="color:#2aa198">1</span>]) j <span style="color:#719e07">=</span> ne[j];
+        
+        <span style="color:#719e07">if</span>( s[i] <span style="color:#719e07">==</span> p[j<span style="color:#719e07">+</span><span style="color:#2aa198">1</span>]) j<span style="color:#719e07">++</span>;
+        <span style="color:#719e07">if</span>(j <span style="color:#719e07">==</span> n)<span style="color:#586e75">//前n个元素已经匹配
+</span><span style="color:#586e75"></span>        {
+            <span style="color:#586e75">//匹配成功
+</span><span style="color:#586e75"></span>            printf(<span style="color:#2aa198">&#34;%d &#34;</span>, i <span style="color:#719e07">-</span> n );
+            j <span style="color:#719e07">=</span> ne[j];
+        }
+    }
+    
+    
+    <span style="color:#719e07">return</span> <span style="color:#2aa198">0</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="trie树">Trie树<a hidden class="anchor" aria-hidden="true" href="#trie树">#</a></h1>
+<p>高效地存储和查找字符串，集合的数据结构</p>
+<p>比如：</p>
+<blockquote>
+<p>abcdef
+abdef
+aced
+bcdf
+bcff
+cdaa
+dcdc</p>
+</blockquote>
+<p>当数量过大，可以使用二进制来表示。比如考虑汉字，直接找其二进制100000101010,每一步仅考虑1和0.</p>
+<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/a3936e10-1a45-453a-8b98-061af3667eeb/Untitled.png" alt="Untitled"  />
+</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">47
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstdio&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07"></span>
+<span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
+
+<span style="color:#719e07">const</span> <span style="color:#dc322f">int</span> N <span style="color:#719e07">=</span> <span style="color:#2aa198">100010</span>;
+
+<span style="color:#dc322f">int</span> son[N][<span style="color:#2aa198">26</span>], cnt[N], idx;
+<span style="color:#586e75">//下标是0的点，既是根节点，又是空节点
+</span><span style="color:#586e75"></span><span style="color:#dc322f">char</span> str[N];
+
+<span style="color:#dc322f">void</span> <span style="color:#268bd2">insert</span>(<span style="color:#dc322f">char</span> str[])
+{
+    <span style="color:#dc322f">int</span> p <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>;
+    <span style="color:#719e07">for</span>(<span style="color:#dc322f">int</span> i <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>; str[i]; <span style="color:#719e07">++</span>i){
+        <span style="color:#dc322f">int</span> u <span style="color:#719e07">=</span> str[i] <span style="color:#719e07">-</span> <span style="color:#2aa198">&#39;a&#39;</span>;   
+        <span style="color:#719e07">if</span> (<span style="color:#719e07">!</span>son[p][u]) son[p][u] <span style="color:#719e07">=</span> <span style="color:#719e07">++</span> idx;
+        p <span style="color:#719e07">=</span> son[p][u];
+    }
+    cnt[p] <span style="color:#719e07">++</span>;
+}
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">query</span>(<span style="color:#dc322f">char</span> str[])
+{
+    <span style="color:#dc322f">int</span> p <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>;
+    <span style="color:#719e07">for</span>(<span style="color:#dc322f">int</span> i <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>; str[i]; <span style="color:#719e07">++</span>i)
+    {
+        <span style="color:#dc322f">int</span> u <span style="color:#719e07">=</span> str[i] <span style="color:#719e07">-</span> <span style="color:#2aa198">&#39;a&#39;</span>;
+        <span style="color:#719e07">if</span>(<span style="color:#719e07">!</span>son[p][u]) <span style="color:#719e07">return</span> <span style="color:#2aa198">0</span>;
+        p <span style="color:#719e07">=</span> son[p][u];
+    }
+    <span style="color:#719e07">return</span> cnt[p];
+}
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">main</span>()
+{
+    <span style="color:#dc322f">int</span> n;
+    cin <span style="color:#719e07">&gt;&gt;</span> n;
+    <span style="color:#719e07">while</span>(n<span style="color:#719e07">--</span>)
+    {
+        <span style="color:#dc322f">char</span> op[<span style="color:#2aa198">2</span>];
+        cin <span style="color:#719e07">&gt;&gt;</span> op <span style="color:#719e07">&gt;&gt;</span> str;
+        <span style="color:#719e07">if</span> (op[<span style="color:#2aa198">0</span>] <span style="color:#719e07">==</span> <span style="color:#2aa198">&#39;I&#39;</span>) insert(str);
+        <span style="color:#719e07">else</span> cout <span style="color:#719e07">&lt;&lt;</span> query(str) <span style="color:#719e07">&lt;&lt;</span> endl;
+    }
+    <span style="color:#719e07">return</span> <span style="color:#2aa198">0</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="并查集">并查集<a hidden class="anchor" aria-hidden="true" href="#并查集">#</a></h1>
+<p>面试和比赛，非常容易出的数据结构。</p>
+<p>用来快速的处理：</p>
+<ol>
+<li>将两个集合合并</li>
+<li>询问两个元素是否在一个集合当中</li>
+</ol>
+<p>belong[x] = a，存储x属于集合a。</p>
+<p>近乎O（1）的支持上面的两个操作。</p>
+<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/bce5892b-f9ae-4e8b-ac52-3bf5dd4e765a/Untitled.png" alt="Untitled"  />
+</p>
+<p>基本原理：每个集合用一棵树来表示，树根的编号就是整个集合的编号，每个节点存储它的父节点，p[x] 表示父节点。</p>
+<ul>
+<li>问题1： 如何判断树根 p<input checked="" disabled="" type="checkbox"> == x, x就是集合的编号</li>
+<li>问题2：如何求x的集合编号，while(p<input checked="" disabled="" type="checkbox"> ! = x) x = p<input checked="" disabled="" type="checkbox"> </li>
+<li>问题3：如何合并两个集合：假设px是x的集合的编号，py是y的集合的编号，那么p<input checked="" disabled="" type="checkbox"> = y;</li>
+</ul>
+<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e199febc-7ab2-49e1-b522-8eaed0016ff8/Untitled.png" alt="Untitled"  />
+</p>
+<p>并查集的优化：</p>
+<ul>
+<li>（路径压缩）, 每次查询其父节点，只要直接指向其祖宗节点。</li>
+</ul>
+<p>合并集合</p>
+<p><a href="https://www.acwing.com/problem/content/838/">https://www.acwing.com/problem/content/838/</a></p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">36
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstdio&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07"></span>
+<span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
+
+<span style="color:#719e07">const</span> <span style="color:#dc322f">int</span> N <span style="color:#719e07">=</span> <span style="color:#2aa198">1e5</span> <span style="color:#719e07">+</span> <span style="color:#2aa198">10</span>;
+
+<span style="color:#dc322f">int</span> p[N];
+<span style="color:#dc322f">int</span> n, m;
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">find</span>(<span style="color:#dc322f">int</span> x) <span style="color:#586e75">//返回x的祖宗节点，加上路径压缩
+</span><span style="color:#586e75"></span>{
+    <span style="color:#719e07">if</span>(p[x] <span style="color:#719e07">!=</span> x) p[x] <span style="color:#719e07">=</span> find(p[x]);
+    <span style="color:#719e07">return</span> p[x];
+}
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">main</span>()
+{
+    cin <span style="color:#719e07">&gt;&gt;</span> n <span style="color:#719e07">&gt;&gt;</span> m;
+    
+    <span style="color:#719e07">for</span>(<span style="color:#dc322f">int</span> i <span style="color:#719e07">=</span> <span style="color:#2aa198">1</span>; i <span style="color:#719e07">&lt;=</span>n ; <span style="color:#719e07">++</span> i) p[i] <span style="color:#719e07">=</span> i;
+    
+    <span style="color:#719e07">while</span>(m <span style="color:#719e07">--</span>)
+    {
+        <span style="color:#dc322f">char</span> op[<span style="color:#2aa198">2</span>];
+<span style="color:#586e75">//建议读入一个字符，也要使用字符串，自动过滤空格和回车
+</span><span style="color:#586e75"></span>        <span style="color:#dc322f">int</span> a, b;
+        cin <span style="color:#719e07">&gt;&gt;</span> op <span style="color:#719e07">&gt;&gt;</span> a <span style="color:#719e07">&gt;&gt;</span> b;
+        <span style="color:#719e07">if</span>(op[<span style="color:#2aa198">0</span>] <span style="color:#719e07">==</span> <span style="color:#2aa198">&#39;M&#39;</span>) p[find(a)] <span style="color:#719e07">=</span> find(b);
+        <span style="color:#719e07">else</span> {
+            <span style="color:#719e07">if</span>(find(a) <span style="color:#719e07">==</span> find(b)) puts(<span style="color:#2aa198">&#34;Yes&#34;</span>);
+            <span style="color:#719e07">else</span> puts(<span style="color:#2aa198">&#34;No&#34;</span>);
+        }
+    }
+    
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>连通块中点的数量<a href="https://www.acwing.com/problem/content/839/">https://www.acwing.com/problem/content/839/</a></p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">53
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstdio&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07"></span>
+<span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
+
+<span style="color:#719e07">const</span> <span style="color:#dc322f">int</span> N <span style="color:#719e07">=</span> <span style="color:#2aa198">1e5</span> <span style="color:#719e07">+</span> <span style="color:#2aa198">10</span>;
+
+<span style="color:#586e75">//如何查询每个联通块的数量？维护根节点的size即可。
+</span><span style="color:#586e75"></span><span style="color:#dc322f">int</span> p[N], siz[N];
+<span style="color:#dc322f">int</span> n, m;
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">find</span>(<span style="color:#dc322f">int</span> x) <span style="color:#586e75">//返回x的祖宗节点，加上路径压缩
+</span><span style="color:#586e75"></span>{
+    <span style="color:#719e07">if</span>(p[x] <span style="color:#719e07">!=</span> x) p[x] <span style="color:#719e07">=</span> find(p[x]);
+    <span style="color:#719e07">return</span> p[x];
+}
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">main</span>()
+{
+    cin <span style="color:#719e07">&gt;&gt;</span> n <span style="color:#719e07">&gt;&gt;</span> m;
+    
+    <span style="color:#719e07">for</span>(<span style="color:#dc322f">int</span> i <span style="color:#719e07">=</span> <span style="color:#2aa198">1</span>; i <span style="color:#719e07">&lt;=</span>n ; <span style="color:#719e07">++</span> i) {
+        p[i] <span style="color:#719e07">=</span> i;
+        siz[i] <span style="color:#719e07">=</span> <span style="color:#2aa198">1</span>;
+    }
+    
+    <span style="color:#719e07">while</span>(m <span style="color:#719e07">--</span>)
+    {
+        <span style="color:#dc322f">char</span> op[<span style="color:#2aa198">5</span>];
+<span style="color:#586e75">//建议读入一个字符，也要使用字符串，自动过滤空格和回车
+</span><span style="color:#586e75"></span>        <span style="color:#dc322f">int</span> a, b;
+        cin <span style="color:#719e07">&gt;&gt;</span> op;
+        <span style="color:#719e07">if</span>(op[<span style="color:#2aa198">0</span>] <span style="color:#719e07">==</span> <span style="color:#2aa198">&#39;C&#39;</span>)
+        {
+            cin <span style="color:#719e07">&gt;&gt;</span> a <span style="color:#719e07">&gt;&gt;</span> b;
+            <span style="color:#719e07">if</span>(find(a) <span style="color:#719e07">!=</span> find(b))
+                siz[find(b)] <span style="color:#719e07">+=</span> siz[find(a)];
+            p[find(a)] <span style="color:#719e07">=</span> find(b);
+            
+        } <span style="color:#719e07">else</span> <span style="color:#719e07">if</span> (op[<span style="color:#2aa198">1</span>] <span style="color:#719e07">==</span> <span style="color:#2aa198">&#39;1&#39;</span>)
+        {
+            cin <span style="color:#719e07">&gt;&gt;</span> a <span style="color:#719e07">&gt;&gt;</span> b;
+            <span style="color:#719e07">if</span>(find(a) <span style="color:#719e07">==</span> find(b)) puts(<span style="color:#2aa198">&#34;Yes&#34;</span>);
+            <span style="color:#719e07">else</span> puts(<span style="color:#2aa198">&#34;No&#34;</span>);
+        } <span style="color:#719e07">else</span>
+        {
+            cin <span style="color:#719e07">&gt;&gt;</span> a;
+            cout <span style="color:#719e07">&lt;&lt;</span> siz[find(a)] <span style="color:#719e07">&lt;&lt;</span> endl;
+        }
+        
+    }
+    
+}
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="堆">堆<a hidden class="anchor" aria-hidden="true" href="#堆">#</a></h1>
+<p>如何手写一个堆？</p>
+<ol>
+<li>插入一个数</li>
+<li>求集合当中的最小值</li>
+<li>删除最小值</li>
+<li>删除任意一个元素</li>
+<li>修改任意一个元素</li>
+</ol>
+<p>堆的基本结构：</p>
+<p>是一棵二叉树。是一棵完全二叉树。</p>
+<p>以小顶堆为例，每个节点的左右子节点都大于该节点的值。</p>
+<p>使用一个一维数组存放堆。</p>
+<p>1号点是根节点，x的左儿子是2x，右子节点是2x+1。</p>
+<p>操作：</p>
+<ul>
+<li>down(x)，往下调整x。每次找这个节点和两个子节点的最小值，然后交换即可。</li>
+<li>up(x)，往上调整x。每次往上和父节点比较，需要交换时交换即可。</li>
+</ul>
+<p>怎么插入x？</p>
+<ul>
+<li>heap[ ++ idx] = x; up(x);</li>
+</ul>
+<p>最小值：</p>
+<ul>
+<li>heap[1]</li>
+</ul>
+<p>删除最小值：</p>
+<ul>
+<li>heap[1] = heap[idx]; idx—; down(1);</li>
+</ul>
+<p>删除任意元素</p>
+<ul>
+<li>heap[k] = heap[size], size—; down(k); up(k);</li>
+</ul>
+<p>修改元素：</p>
+<ul>
+<li>heap[k] = x; down(k); up(k);</li>
+</ul>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">54
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">55
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;algorithm&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07"></span>
+<span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
+
+<span style="color:#719e07">const</span> <span style="color:#dc322f">int</span> N <span style="color:#719e07">=</span> <span style="color:#2aa198">100010</span>;
+
+<span style="color:#dc322f">int</span> n, m;
+<span style="color:#dc322f">int</span> h[N], idx;
+
+<span style="color:#dc322f">void</span> <span style="color:#268bd2">down</span>(<span style="color:#dc322f">int</span> u)
+{
+    <span style="color:#dc322f">int</span> t <span style="color:#719e07">=</span> u;
+    <span style="color:#719e07">if</span> (u <span style="color:#719e07">*</span> <span style="color:#2aa198">2</span> <span style="color:#719e07">&lt;=</span> idx <span style="color:#719e07">&amp;&amp;</span> h[u <span style="color:#719e07">*</span> <span style="color:#2aa198">2</span>] <span style="color:#719e07">&lt;</span> h[t]) t <span style="color:#719e07">=</span> u <span style="color:#719e07">*</span> <span style="color:#2aa198">2</span>;
+    <span style="color:#719e07">if</span> (u <span style="color:#719e07">*</span> <span style="color:#2aa198">2</span> <span style="color:#719e07">+</span> <span style="color:#2aa198">1</span> <span style="color:#719e07">&lt;=</span> idx <span style="color:#719e07">&amp;&amp;</span> h[u<span style="color:#719e07">*</span><span style="color:#2aa198">2</span> <span style="color:#719e07">+</span><span style="color:#2aa198">1</span>] <span style="color:#719e07">&lt;</span> h[t]) t <span style="color:#719e07">=</span> u<span style="color:#719e07">*</span><span style="color:#2aa198">2</span> <span style="color:#719e07">+</span> <span style="color:#2aa198">1</span>;
+    
+    <span style="color:#719e07">if</span>(u<span style="color:#719e07">!=</span>t){
+        swap(h[u], h[t]);
+        down(t);
+    }
+}
+
+<span style="color:#dc322f">void</span> <span style="color:#268bd2">up</span>(<span style="color:#dc322f">int</span> u)
+{
+    <span style="color:#719e07">while</span>( u <span style="color:#719e07">/</span> <span style="color:#2aa198">2</span> <span style="color:#719e07">&amp;&amp;</span> h[ u<span style="color:#719e07">/</span><span style="color:#2aa198">2</span> ] <span style="color:#719e07">&gt;</span> h[u])
+    {
+        swap(h[u<span style="color:#719e07">/</span><span style="color:#2aa198">2</span>], h[u]);
+        u<span style="color:#719e07">/=</span><span style="color:#2aa198">2</span>;
+    }   
+}
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">main</span>()
+{
+    cin <span style="color:#719e07">&gt;&gt;</span> n <span style="color:#719e07">&gt;&gt;</span> m;
+    
+    <span style="color:#719e07">for</span>(<span style="color:#dc322f">int</span> i <span style="color:#719e07">=</span> <span style="color:#2aa198">1</span>; i <span style="color:#719e07">&lt;=</span> n; <span style="color:#719e07">++</span> i) scanf(<span style="color:#2aa198">&#34;%d&#34;</span>, <span style="color:#719e07">&amp;</span>h[i]);
+    idx <span style="color:#719e07">=</span> n;
+    
+    <span style="color:#719e07">for</span>(<span style="color:#dc322f">int</span> i <span style="color:#719e07">=</span> n<span style="color:#719e07">/</span><span style="color:#2aa198">2</span>; i ; <span style="color:#719e07">--</span> i) down(i);
+    <span style="color:#586e75">/*这是建立堆的过程
+</span><span style="color:#586e75">    为什么从n/2开始down？
+</span><span style="color:#586e75">    n/2的子孩子是最后一个元素，是完全二叉树的倒数第二层，所以这样一直递归
+</span><span style="color:#586e75">    的做就好，而且时间复杂度是O(n);
+</span><span style="color:#586e75">    */</span>
+    
+    <span style="color:#719e07">while</span>(m<span style="color:#719e07">--</span>)
+    {
+        printf(<span style="color:#2aa198">&#34;%d &#34;</span>, h[<span style="color:#2aa198">1</span>]);
+        h[<span style="color:#2aa198">1</span>] <span style="color:#719e07">=</span> h[idx];
+        idx <span style="color:#719e07">--</span>;
+        down(<span style="color:#2aa198">1</span>);
+    }
+
+    <span style="color:#719e07">return</span> <span style="color:#2aa198">0</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>带映射版的堆操作:</strong></p>
+<p><a href="https://www.acwing.com/problem/content/841/">https://www.acwing.com/problem/content/841/</a></p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">54
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">55
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">56
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">57
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">58
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">59
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">60
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">61
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">62
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">63
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">64
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">65
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">66
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">67
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">68
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">69
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">70
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">71
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">72
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">73
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">74
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">75
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">76
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">77
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">78
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">79
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">80
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">81
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">82
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">83
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">84
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">85
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">86
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">87
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;algorithm&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstring&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07"></span>
+<span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
+
+<span style="color:#719e07">const</span> <span style="color:#dc322f">int</span> N <span style="color:#719e07">=</span> <span style="color:#2aa198">100010</span>;
+
+<span style="color:#dc322f">int</span> n;
+<span style="color:#dc322f">int</span> h[N], ph[N], hp[N], idx;
+<span style="color:#586e75">//ph存放插入的第k个元素在堆的下标位置
+</span><span style="color:#586e75">//hp存放的是堆中第j个元素在ph数组的位置索引。
+</span><span style="color:#586e75">//ph和hp是互为反函数。
+</span><span style="color:#586e75"></span>
+<span style="color:#dc322f">void</span> <span style="color:#268bd2">heap_swap</span>(<span style="color:#dc322f">int</span> a, <span style="color:#dc322f">int</span> b)
+{
+    swap(ph[hp[a]], ph[hp[b]]);
+    swap(hp[a], hp[b]);
+    swap(h[a], h[b]);
+}
+
+<span style="color:#dc322f">void</span> <span style="color:#268bd2">down</span>(<span style="color:#dc322f">int</span> u)
+{
+    <span style="color:#dc322f">int</span> t <span style="color:#719e07">=</span> u;
+    <span style="color:#719e07">if</span> (u <span style="color:#719e07">*</span> <span style="color:#2aa198">2</span> <span style="color:#719e07">&lt;=</span> idx <span style="color:#719e07">&amp;&amp;</span> h[u <span style="color:#719e07">*</span> <span style="color:#2aa198">2</span>] <span style="color:#719e07">&lt;</span> h[t]) t <span style="color:#719e07">=</span> u <span style="color:#719e07">*</span> <span style="color:#2aa198">2</span>;
+    <span style="color:#719e07">if</span> (u <span style="color:#719e07">*</span> <span style="color:#2aa198">2</span> <span style="color:#719e07">+</span> <span style="color:#2aa198">1</span> <span style="color:#719e07">&lt;=</span> idx <span style="color:#719e07">&amp;&amp;</span> h[u<span style="color:#719e07">*</span><span style="color:#2aa198">2</span> <span style="color:#719e07">+</span><span style="color:#2aa198">1</span>] <span style="color:#719e07">&lt;</span> h[t]) t <span style="color:#719e07">=</span> u<span style="color:#719e07">*</span><span style="color:#2aa198">2</span> <span style="color:#719e07">+</span> <span style="color:#2aa198">1</span>;
+    
+    <span style="color:#719e07">if</span>(u<span style="color:#719e07">!=</span>t){
+        heap_swap(u, t);
+        down(t);
+    }
+}
+
+<span style="color:#dc322f">void</span> <span style="color:#268bd2">up</span>(<span style="color:#dc322f">int</span> u)
+{
+    <span style="color:#719e07">while</span>( u <span style="color:#719e07">/</span> <span style="color:#2aa198">2</span> <span style="color:#719e07">&amp;&amp;</span> h[ u<span style="color:#719e07">/</span><span style="color:#2aa198">2</span> ] <span style="color:#719e07">&gt;</span> h[u])
+    {
+        heap_swap(u<span style="color:#719e07">/</span><span style="color:#2aa198">2</span>, u);
+        u<span style="color:#719e07">/=</span><span style="color:#2aa198">2</span>;
+    }   
+}
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">main</span>()
+{
+    cin <span style="color:#719e07">&gt;&gt;</span> n;
+    <span style="color:#dc322f">int</span> m <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>;
+    <span style="color:#586e75">//m是第m个插入的元素。
+</span><span style="color:#586e75"></span>    <span style="color:#719e07">while</span>(n <span style="color:#719e07">--</span>)
+    {
+        <span style="color:#dc322f">char</span> op[<span style="color:#2aa198">10</span>];
+        <span style="color:#dc322f">int</span> k, x;
+        cin <span style="color:#719e07">&gt;&gt;</span> op;
+        <span style="color:#719e07">if</span> (<span style="color:#719e07">!</span>strcmp(op, <span style="color:#2aa198">&#34;I&#34;</span>))
+        {
+            cin <span style="color:#719e07">&gt;&gt;</span> x;
+            idx <span style="color:#719e07">++</span>;
+            m <span style="color:#719e07">++</span>;
+            ph[m] <span style="color:#719e07">=</span> idx;
+            hp[idx] <span style="color:#719e07">=</span> m;
+            h[idx] <span style="color:#719e07">=</span> x;
+            up(idx);
+        }
+        <span style="color:#719e07">else</span> <span style="color:#719e07">if</span> (<span style="color:#719e07">!</span>strcmp(op, <span style="color:#2aa198">&#34;PM&#34;</span>)) cout <span style="color:#719e07">&lt;&lt;</span> h[<span style="color:#2aa198">1</span>] <span style="color:#719e07">&lt;&lt;</span> endl;
+        <span style="color:#719e07">else</span> <span style="color:#719e07">if</span> (<span style="color:#719e07">!</span>strcmp(op, <span style="color:#2aa198">&#34;DM&#34;</span>))
+        {
+            heap_swap(<span style="color:#2aa198">1</span>, idx);
+            idx <span style="color:#719e07">--</span>;
+            down(<span style="color:#2aa198">1</span>);
+        }
+        <span style="color:#719e07">else</span> <span style="color:#719e07">if</span>(<span style="color:#719e07">!</span>strcmp(op, <span style="color:#2aa198">&#34;D&#34;</span>))
+        {
+            cin <span style="color:#719e07">&gt;&gt;</span> k;
+            k <span style="color:#719e07">=</span> ph[k];
+            heap_swap(k, idx);
+            idx <span style="color:#719e07">--</span>;
+            down(k), up(k);
+        } <span style="color:#719e07">else</span> 
+        {
+            cin <span style="color:#719e07">&gt;&gt;</span> k <span style="color:#719e07">&gt;&gt;</span> x;
+            k <span style="color:#719e07">=</span> ph[k];
+            h[k] <span style="color:#719e07">=</span> x;
+            down(k), up(k);
+        }
+    }
+
+    <span style="color:#719e07">return</span> <span style="color:#2aa198">0</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>find()和cnt()可以改成，get()和cnt()保证不编译错误，compile ERROR。</p>
+<h1 id="hash表">Hash表<a hidden class="anchor" aria-hidden="true" href="#hash表">#</a></h1>
+<ul>
+<li>
+<p>哈希表的存储结构，认为是O(1). 如果要删除，只要开个数组标记一下。</p>
+<ul>
+<li>
+<p>开放寻址法</p>
+</li>
+<li>
+<p>拉链法</p>
+<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c103ba4d-0bef-4bee-b9f3-1c51a2edfada/Untitled.png" alt="Untitled"  />
+</p>
+</li>
+</ul>
+<p>常见情景： 把0-10^9的数映射到0-10^5的数组。</p>
+<p>x mod 10 ^ 5 附近的质数。然后处理冲突。100003.</p>
+<p>和离散化比较，离散是需要保序的。</p>
+</li>
+<li>
+<p>常用的字符串的哈希方式。</p>
+</li>
+</ul>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">54
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">55
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">56
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">57
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#586e75">//拉链法
+</span><span style="color:#586e75"></span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstring&gt;//有memset</span><span style="color:#719e07">
+</span><span style="color:#719e07"></span>
+<span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
+
+<span style="color:#719e07">const</span> <span style="color:#dc322f">int</span> N <span style="color:#719e07">=</span> <span style="color:#2aa198">100003</span>;
+<span style="color:#586e75">//取大于10万的最小的质数。
+</span><span style="color:#586e75"></span>
+<span style="color:#dc322f">int</span> h[N], e[N], ne[N], idx;
+
+<span style="color:#dc322f">void</span> <span style="color:#268bd2">insert</span>(<span style="color:#dc322f">int</span> x)
+{
+    <span style="color:#dc322f">int</span> k <span style="color:#719e07">=</span> (x <span style="color:#719e07">%</span> N <span style="color:#719e07">+</span> N) <span style="color:#719e07">%</span> N; <span style="color:#586e75">//因为有的数是负数。
+</span><span style="color:#586e75"></span>    
+    e[idx] <span style="color:#719e07">=</span> x;
+    <span style="color:#586e75">//e存值
+</span><span style="color:#586e75"></span>    ne[idx] <span style="color:#719e07">=</span> h[k];
+    <span style="color:#586e75">//ne存指针
+</span><span style="color:#586e75"></span>    h[k] <span style="color:#719e07">=</span> idx;
+    idx <span style="color:#719e07">++</span>;
+    <span style="color:#586e75">//插入头部。
+</span><span style="color:#586e75"></span>}
+
+<span style="color:#dc322f">bool</span> <span style="color:#268bd2">find</span>(<span style="color:#dc322f">int</span> x)
+{
+    <span style="color:#dc322f">int</span> k <span style="color:#719e07">=</span> (x <span style="color:#719e07">%</span> N <span style="color:#719e07">+</span> N) <span style="color:#719e07">%</span> N;
+    <span style="color:#719e07">for</span>(<span style="color:#dc322f">int</span> i <span style="color:#719e07">=</span> h[k]; i <span style="color:#719e07">!=</span> <span style="color:#719e07">-</span><span style="color:#2aa198">1</span>; i <span style="color:#719e07">=</span> ne[i])
+    {
+        <span style="color:#719e07">if</span>(e[i] <span style="color:#719e07">==</span> x)
+            <span style="color:#719e07">return</span> <span style="color:#b58900">true</span>;
+    }
+    <span style="color:#719e07">return</span> <span style="color:#b58900">false</span>;
+}
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">main</span>(){
+    <span style="color:#dc322f">int</span> n;
+    
+    memset(h, <span style="color:#719e07">-</span><span style="color:#2aa198">1</span>, <span style="color:#719e07">sizeof</span> h);
+    
+    cin <span style="color:#719e07">&gt;&gt;</span> n;
+    <span style="color:#719e07">while</span>(n <span style="color:#719e07">--</span>)
+    {
+        <span style="color:#dc322f">char</span> op[<span style="color:#2aa198">2</span>];
+        <span style="color:#dc322f">int</span> x;
+        cin <span style="color:#719e07">&gt;&gt;</span> op <span style="color:#719e07">&gt;&gt;</span> x;
+        
+        <span style="color:#719e07">if</span>(op[<span style="color:#2aa198">0</span>] <span style="color:#719e07">==</span> <span style="color:#2aa198">&#39;I&#39;</span>) insert(x);
+        <span style="color:#719e07">else</span> {
+            <span style="color:#719e07">if</span> (find(x)) puts(<span style="color:#2aa198">&#34;Yes&#34;</span>);
+            <span style="color:#719e07">else</span> puts(<span style="color:#2aa198">&#34;No&#34;</span>);
+        }
+    }
+        
+    
+    <span style="color:#719e07">return</span> <span style="color:#2aa198">0</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/05f2a974-0519-4bbe-8f51-05e41481dcb7/Untitled.png" alt="Untitled"  />
+</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">54
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#586e75">//开放寻址法
+</span><span style="color:#586e75"></span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstring&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07"></span>
+<span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
+
+<span style="color:#586e75">//0xf3f3f3f3是10^9级别，很大，用来初始化数组
+</span><span style="color:#586e75"></span><span style="color:#719e07">const</span> <span style="color:#dc322f">int</span> N <span style="color:#719e07">=</span> <span style="color:#2aa198">2e5</span> <span style="color:#719e07">+</span> <span style="color:#2aa198">3</span>, null <span style="color:#719e07">=</span> <span style="color:#2aa198">0x3f3f3f3f</span>;
+<span style="color:#586e75">//一般取三倍。
+</span><span style="color:#586e75">//取质数。
+</span><span style="color:#586e75"></span><span style="color:#dc322f">int</span> h[N];
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">find</span>(<span style="color:#dc322f">int</span> x)
+{
+    <span style="color:#dc322f">int</span> k <span style="color:#719e07">=</span> (x <span style="color:#719e07">%</span> N <span style="color:#719e07">+</span> N) <span style="color:#719e07">%</span> N;
+ 
+    <span style="color:#719e07">while</span>(h[k] <span style="color:#719e07">!=</span> null <span style="color:#719e07">&amp;&amp;</span> h[k] <span style="color:#719e07">!=</span> x)
+    {
+        k <span style="color:#719e07">++</span>;
+        <span style="color:#719e07">if</span>(k <span style="color:#719e07">==</span> N) k <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>;
+    }
+    <span style="color:#586e75">//这个过程一定会停止的，因为总共只有1e5个数字，而N是二倍，所以不担心满;
+</span><span style="color:#586e75"></span>    <span style="color:#586e75">//结束条件时，h[k] == null 或 h[k] == x
+</span><span style="color:#586e75"></span>    <span style="color:#719e07">return</span> k;
+}
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">main</span>(){
+    <span style="color:#dc322f">int</span> n;
+    cin <span style="color:#719e07">&gt;&gt;</span> n;
+    
+    memset(h, <span style="color:#2aa198">0x3f</span>, <span style="color:#719e07">sizeof</span> h);
+    
+    <span style="color:#719e07">while</span>(n <span style="color:#719e07">--</span>)
+    {
+        <span style="color:#dc322f">char</span> op[<span style="color:#2aa198">2</span>];
+        <span style="color:#dc322f">int</span> x;
+        cin <span style="color:#719e07">&gt;&gt;</span> op <span style="color:#719e07">&gt;&gt;</span> x;
+        
+        <span style="color:#dc322f">int</span> k <span style="color:#719e07">=</span> find(x);
+        <span style="color:#719e07">if</span> (op[<span style="color:#2aa198">0</span>] <span style="color:#719e07">==</span> <span style="color:#2aa198">&#39;I&#39;</span>)
+        {
+            h[k] <span style="color:#719e07">=</span> x;
+        } 
+        <span style="color:#719e07">else</span>
+        {
+            <span style="color:#719e07">if</span> (h[k] <span style="color:#719e07">!=</span> null) puts(<span style="color:#2aa198">&#34;Yes&#34;</span>);
+            <span style="color:#719e07">else</span> puts(<span style="color:#2aa198">&#34;No&#34;</span>);
+        }
+        
+    }
+    
+    
+    <span style="color:#719e07">return</span> <span style="color:#2aa198">0</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>字符串前缀哈希法。</p>
+<blockquote>
+<p>str = &ldquo;ABCDEF&rdquo;
+h[1] = &ldquo;A&rdquo; // 前1个
+h[2] = &ldquo;AB&rdquo;</p>
+</blockquote>
+<p>即处理前缀的hash，h[0] = 0</p>
+<p>如果对字符串进行哈希？当成p进制数，a * p ^ 3 + b * p * 2 ……;再取模Q。</p>
+<p>不能把字母映射成0.</p>
+<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/715c9902-4611-463d-8c95-8172d7224eaf/Untitled.png" alt="Untitled"  />
+</p>
+<p>那么前缀哈希值有什么用呢？因为我们已经知道 h[L]到h[R]的哈希值</p>
+<p>所以求L - R的哈希值，只要 h[R] - h[L - 1] * p ^ {R-L+1};</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">45
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstring&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07"></span>
+<span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
+
+<span style="color:#719e07">typedef</span> <span style="color:#dc322f">unsigned</span> <span style="color:#dc322f">long</span> <span style="color:#dc322f">long</span> ULL;
+
+<span style="color:#719e07">const</span> <span style="color:#dc322f">int</span> N <span style="color:#719e07">=</span> <span style="color:#2aa198">100010</span>, P <span style="color:#719e07">=</span> <span style="color:#2aa198">131</span>; 
+
+<span style="color:#dc322f">int</span> n, m;
+<span style="color:#dc322f">char</span> str[N];
+ULL h[N], p[N];
+<span style="color:#586e75">//p是存放P的n次方
+</span><span style="color:#586e75"></span>
+ULL <span style="color:#268bd2">get</span>(<span style="color:#dc322f">int</span> l, <span style="color:#dc322f">int</span> r)
+{
+    <span style="color:#719e07">return</span> h[r] <span style="color:#719e07">-</span> h[l <span style="color:#719e07">-</span> <span style="color:#2aa198">1</span>] <span style="color:#719e07">*</span> p[r <span style="color:#719e07">-</span> l <span style="color:#719e07">+</span> <span style="color:#2aa198">1</span>];
+}
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">main</span>(){
+    
+    cin <span style="color:#719e07">&gt;&gt;</span> n <span style="color:#719e07">&gt;&gt;</span> m <span style="color:#719e07">&gt;&gt;</span> str <span style="color:#719e07">+</span> <span style="color:#2aa198">1</span>;
+    
+    p[<span style="color:#2aa198">0</span>] <span style="color:#719e07">=</span> <span style="color:#2aa198">1</span>;
+    <span style="color:#719e07">for</span>(<span style="color:#dc322f">int</span> i <span style="color:#719e07">=</span> <span style="color:#2aa198">1</span>; i <span style="color:#719e07">&lt;=</span> n; <span style="color:#719e07">++</span> i)
+    {
+        p[i] <span style="color:#719e07">=</span> p[i <span style="color:#719e07">-</span> <span style="color:#2aa198">1</span>] <span style="color:#719e07">*</span> P;
+        h[i] <span style="color:#719e07">=</span> h[i <span style="color:#719e07">-</span> <span style="color:#2aa198">1</span>] <span style="color:#719e07">*</span> P <span style="color:#719e07">+</span> str[i];
+    }
+    
+    <span style="color:#719e07">while</span>( m <span style="color:#719e07">--</span>)
+    {
+        <span style="color:#dc322f">int</span> l1, r1, l2, r2;   
+        cin <span style="color:#719e07">&gt;&gt;</span> l1 <span style="color:#719e07">&gt;&gt;</span> r1 <span style="color:#719e07">&gt;&gt;</span> l2 <span style="color:#719e07">&gt;&gt;</span> r2;
+        <span style="color:#719e07">if</span>(get(l1, r1) <span style="color:#719e07">==</span> get(l2, r2))
+        {
+            puts(<span style="color:#2aa198">&#34;Yes&#34;</span>);   
+        } <span style="color:#719e07">else</span> {
+            puts(<span style="color:#2aa198">&#34;No&#34;</span>);   
+        }
+        
+    }
+    
+    <span style="color:#719e07">return</span> <span style="color:#2aa198">0</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>hash算法求两个字符串相同比KMP更好</p>
+<p>KMP更适合循环节。</p>
+<h1 id="cstl使用">C++STL使用<a hidden class="anchor" aria-hidden="true" href="#cstl使用">#</a></h1>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">vector 可变长数组，倍增的思想
+string 处理字符串的利器，substr(), c_str()
+queue, 队列，进行push(),front(), pop()
+priority_queue，优先队列，堆，push(), top(), pop()
+stack 栈，Push(), top(), pop()
+
+deque 双端队列
+
+set, map, multiset, multimap 基于平衡二叉树（红黑树）动态维护有序序列
+unordered_set, unordered_map, unordered_multiset, unordered_multimap 哈希表
+bitset;压位
+
+list用的不多。
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="vector">vector:<a hidden class="anchor" aria-hidden="true" href="#vector">#</a></h2>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">37
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstdio&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstring&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;algorithm&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;vector&gt;</span><span style="color:#719e07">
+</span><span style="color:#719e07"></span>
+<span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
+
+<span style="color:#dc322f">int</span> <span style="color:#268bd2">main</span>()
+{
+    vector<span style="color:#719e07">&lt;</span><span style="color:#dc322f">int</span><span style="color:#719e07">&gt;</span> a(<span style="color:#2aa198">10</span>, <span style="color:#2aa198">3</span>);
+    vector<span style="color:#719e07">&lt;</span><span style="color:#dc322f">int</span><span style="color:#719e07">&gt;</span> b[<span style="color:#2aa198">10</span>]; <span style="color:#586e75">//定义数组
+</span><span style="color:#586e75"></span>    <span style="color:#586e75">//定义一个长度为10的，初始值为3的vector
+</span><span style="color:#586e75"></span>    <span style="color:#586e75">//for(auto x : a) cout &lt;&lt; x &lt;&lt; endl;
+</span><span style="color:#586e75"></span>    
+    a.size(); <span style="color:#586e75">//O(1)
+</span><span style="color:#586e75"></span>    a.empty(); 
+    
+    a.clear();<span style="color:#586e75">//清空
+</span><span style="color:#586e75"></span>    <span style="color:#586e75">/*系统分配空间时，所需时间与空间大小无关，与申请次数有关！！！
+</span><span style="color:#586e75">    所以尽量减少申请空间的次数。
+</span><span style="color:#586e75">    vector最初分配32的空间，然后如果不够，分配64，然后copy过去之前的元素。
+</span><span style="color:#586e75">    申请长度为2 ^ n的数组，那么需要copy(1 + 2 + 2^n-1) = 2^n可以认为是O(1)
+</span><span style="color:#586e75">    申请空间的次数是log(2^n) = n
+</span><span style="color:#586e75">    */</span>
+    
+    a.front();
+    a.back();
+    a.push_back();
+    a.pop_back();
+    begin();
+    end();
+    [];
+    
+		a <span style="color:#719e07">&lt;</span> b可以判断两个vector的大小，按字典序比。
+    <span style="color:#719e07">return</span> <span style="color:#2aa198">0</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="下面是模板">下面是模板<a hidden class="anchor" aria-hidden="true" href="#下面是模板">#</a></h2>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">  1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">  2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">  3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">  4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">  5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">  6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">  7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">  8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">  9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 54
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 55
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 56
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 57
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 58
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 59
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 60
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 61
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 62
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 63
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 64
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 65
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 66
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 67
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 68
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 69
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 70
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 71
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 72
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 73
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 74
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 75
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 76
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 77
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 78
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 79
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 80
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 81
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 82
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 83
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 84
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 85
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 86
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 87
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 88
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 89
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 90
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 91
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 92
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 93
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 94
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 95
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 96
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 97
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 98
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 99
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">100
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">101
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">102
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">103
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">104
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">105
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">106
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">107
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">108
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">109
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">110
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">111
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">112
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">113
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">114
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">115
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">116
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">117
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">118
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">119
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">120
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">121
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">122
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">123
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">124
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">C<span style="color:#719e07">++</span> STL简介
+vector, 变长数组，倍增的思想
+    size()  返回元素个数
+    empty()  返回是否为空
+    clear()  清空
+    front()<span style="color:#719e07">/</span>back()
+    push_back()<span style="color:#719e07">/</span>pop_back()
+    begin()<span style="color:#719e07">/</span>end()
+    []
+    支持比较运算，按字典序
+
+pair<span style="color:#719e07">&lt;</span><span style="color:#dc322f">int</span>, <span style="color:#dc322f">int</span><span style="color:#719e07">&gt;</span>p;
+    first, 第一个元素
+    second, 第二个元素
+    支持比较运算，以first为第一关键字，以second为第二关键字（字典序）
+		p <span style="color:#719e07">=</span> make_pair(<span style="color:#2aa198">10</span>, <span style="color:#2aa198">2</span>);
+		p <span style="color:#719e07">=</span> {<span style="color:#2aa198">10</span>, <span style="color:#2aa198">2</span>};
+		pair<span style="color:#719e07">&lt;</span><span style="color:#dc322f">int</span>, pair<span style="color:#719e07">&lt;</span><span style="color:#dc322f">int</span>, <span style="color:#dc322f">int</span><span style="color:#719e07">&gt;&gt;</span>p;存三个
+
+string，字符串
+    size()<span style="color:#719e07">/</span>length()  返回字符串长度
+    empty()
+    clear()
+    substr(起始下标，(子串长度))  返回子串
+    c_str()  返回字符串所在字符数组的起始地址
+				用于用printf输出
+		支持加运算：
+				string a <span style="color:#719e07">=</span> <span style="color:#2aa198">&#34;1&#34;</span>;
+				a <span style="color:#719e07">+=</span> <span style="color:#2aa198">&#34;bcd&#34;</span>;
+
+queue, 队列
+    size()
+    empty()
+    push()  向队尾插入一个元素
+    front()  返回队头元素
+    back()  返回队尾元素
+    pop()  弹出队头元素
+
+priority_queue, 优先队列，默认是大顶堆
+    size()
+    empty()
+    push()  插入一个元素
+    top()  返回堆顶元素
+    pop()  弹出堆顶元素
+    定义成小顶堆的方式：
+				priority_queue<span style="color:#719e07">&lt;</span><span style="color:#dc322f">int</span>, vector<span style="color:#719e07">&lt;</span><span style="color:#dc322f">int</span><span style="color:#719e07">&gt;</span>, greater<span style="color:#719e07">&lt;</span><span style="color:#dc322f">int</span><span style="color:#719e07">&gt;&gt;</span> q;
+		
+		priority_queue<span style="color:#719e07">&lt;</span><span style="color:#dc322f">int</span><span style="color:#719e07">&gt;</span> heap;
+				可以通过插入<span style="color:#719e07">-</span>x实现小顶堆。
+
+stack, 栈
+    size()
+    empty()
+    push()  向栈顶插入一个元素
+    top()  返回栈顶元素
+    pop()  弹出栈顶元素
+
+deque, 双端队列，加强版vector，效率低，尽量不用
+    size()
+    empty()
+    clear()
+    front()<span style="color:#719e07">/</span>back()
+    push_back()<span style="color:#719e07">/</span>pop_back()
+    push_front()<span style="color:#719e07">/</span>pop_front()
+    begin()<span style="color:#719e07">/</span>end() 迭代器
+    [] 支持直接索引
+
+set, map, multiset, multimap, 基于平衡二叉树（红黑树），动态维护有序序列
+    size()
+    empty()
+    clear()
+    begin()<span style="color:#719e07">/</span>end()
+    <span style="color:#719e07">++</span>, <span style="color:#719e07">--</span> 返回前驱和后继，时间复杂度 O(logn)
+
+    set<span style="color:#719e07">/</span>multiset
+				set不允许重复元素
+        insert()  插入一个数
+        find()  查找一个数，返回迭代器，找不到返回end迭代器
+        count()  返回某一个数的个数
+        erase()
+            (<span style="color:#2aa198">1</span>) 输入是一个数x，删除所有x   O(k <span style="color:#719e07">+</span> logn)
+            (<span style="color:#2aa198">2</span>) 输入一个迭代器，删除这个迭代器
+        lower_bound()<span style="color:#719e07">/</span>upper_bound()
+            lower_bound(x)  返回大于等于x的最小的数的迭代器
+            upper_bound(x)  返回大于x的最小的数的迭代器
+    map<span style="color:#719e07">/</span>multimap
+        insert()  插入的数是一个pair
+        erase()  输入的参数是pair或者迭代器
+        find()
+        []  注意multimap不支持此操作。 时间复杂度是 O(logn)
+        lower_bound()<span style="color:#719e07">/</span>upper_bound()
+				
+				map<span style="color:#719e07">&lt;</span>string ,<span style="color:#dc322f">int</span><span style="color:#719e07">&gt;</span> a;
+				a[<span style="color:#2aa198">&#34;yxc&#34;</span>] <span style="color:#719e07">=</span> <span style="color:#2aa198">1</span>;
+				cout <span style="color:#719e07">&lt;&lt;</span> a[<span style="color:#2aa198">&#34;yec&#34;</span>] <span style="color:#719e07">&lt;&lt;</span> endl;
+				
+unordered_set, unordered_map, unordered_multiset, unordered_multimap, 哈希表
+    和上面类似，增删改查的时间复杂度是 O(<span style="color:#2aa198">1</span>)
+    不支持 lower_bound()<span style="color:#719e07">/</span>upper_bound()， 迭代器的<span style="color:#719e07">++</span>，<span style="color:#719e07">--</span>.
+
+bitset, 圧位
+		是bool数组的1<span style="color:#719e07">/</span><span style="color:#2aa198">8</span>。🐂
+    bitset<span style="color:#719e07">&lt;</span><span style="color:#2aa198">10000</span><span style="color:#719e07">&gt;</span> s; 
+		<span style="color:#719e07">~</span>s;
+
+    <span style="color:#719e07">~</span>, <span style="color:#719e07">&amp;</span>, <span style="color:#719e07">|</span>, <span style="color:#719e07">^</span>
+    <span style="color:#719e07">&gt;&gt;</span>, <span style="color:#719e07">&lt;&lt;</span>
+    <span style="color:#719e07">==</span>, <span style="color:#719e07">!=</span>
+    []
+
+    count()  返回有多少个<span style="color:#2aa198">1</span>
+
+    any()  判断是否至少有一个<span style="color:#2aa198">1</span>
+    none()  判断是否全为<span style="color:#2aa198">0</span>
+
+    set()  把所有位置成<span style="color:#2aa198">1</span>
+    set(k, v)  将第k位变成v
+    reset()  把所有位变成<span style="color:#2aa198">0</span>
+    flip()  等价于<span style="color:#719e07">~</span>
+    flip(k) 把第k位取反
+
+作者：yxc
+链接：https:<span style="color:#586e75">//www.acwing.com/blog/content/404/
+</span><span style="color:#586e75"></span>来源：AcWing
+</code></pre></td></tr></table>
+</div>
+</div>
+
+  </div>
+
+  <footer class="post-footer">
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2021 <a href="https://imingx.github.io/">Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+    menu.onscroll = function () {
+        localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

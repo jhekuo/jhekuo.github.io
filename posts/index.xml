@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Posts on Blog</title>
+    <title>Posts on Ming Blog</title>
     <link>https://imingx.github.io/posts/</link>
-    <description>Recent content in Posts on Blog</description>
+    <description>Recent content in Posts on Ming Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 12 Oct 2021 12:44:02 +0800</lastBuildDate><atom:link href="https://imingx.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
@@ -26,8 +26,7 @@
       <pubDate>Sun, 10 Oct 2021 14:55:48 +0800</pubDate>
       
       <guid>https://imingx.github.io/posts/2/</guid>
-      <description>的确，这个code样式并不好看
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20  #include &amp;lt;bits/stdc++.h&amp;gt;using namespace std; #define rep(i,a,n) for(int i = a; i&amp;lt; n; i++) #define per(i,a,n) for(int i=n-1; i&amp;gt;=a; i--) #define pb push_back #define mp make_pair #define all(x) (x).begin(), (x).end() #define fi first #define se second #define sz(x) ((int)(x).size()) typedef vector&amp;lt;int&amp;gt; VI; typedef long long ll; typedef pair&amp;lt;int, int&amp;gt; PII; typedef double db; mt19937 mrand(random_device{}()); const ll mod = 1000000007; int rnd(int x) { return mrand() % x;} ll mulmod(ll a, ll b) {ll res=0;a%=mod;assert(b&amp;gt;=0);for(;b;b&amp;gt;&amp;gt;=1){if(b&amp;amp;1)res+=a%mod;a+=a%mod;}return res;} ll powmod(ll a, ll b) {ll res=1;a%=mod;assert(b&amp;gt;=0);for(;b;b&amp;gt;&amp;gt;=1){if(b&amp;amp;1)res*=a%mod;a*=a%mod;}return res;} ll gcd(ll a, ll b) { return b ?</description>
+      <description>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20  #include &amp;lt;bits/stdc++.h&amp;gt;using namespace std; #define rep(i,a,n) for(int i = a; i&amp;lt; n; i++) #define per(i,a,n) for(int i=n-1; i&amp;gt;=a; i--) #define pb push_back #define mp make_pair #define all(x) (x).begin(), (x).end() #define fi first #define se second #define sz(x) ((int)(x).size()) typedef vector&amp;lt;int&amp;gt; VI; typedef long long ll; typedef pair&amp;lt;int, int&amp;gt; PII; typedef double db; mt19937 mrand(random_device{}()); const ll mod = 1000000007; int rnd(int x) { return mrand() % x;} ll mulmod(ll a, ll b) {ll res=0;a%=mod;assert(b&amp;gt;=0);for(;b;b&amp;gt;&amp;gt;=1){if(b&amp;amp;1)res+=a%mod;a+=a%mod;}return res;} ll powmod(ll a, ll b) {ll res=1;a%=mod;assert(b&amp;gt;=0);for(;b;b&amp;gt;&amp;gt;=1){if(b&amp;amp;1)res*=a%mod;a*=a%mod;}return res;} ll gcd(ll a, ll b) { return b ?</description>
     </item>
     
   </channel>

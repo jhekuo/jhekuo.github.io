@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
-<title>「Algorithm」02 Data Structure | Blog</title>
+<title>「Algorithm」02 Data Structure | Ming Blog</title>
 <meta name="keywords" content="" />
 <meta name="description" content="链表与邻接表：树与图的存储 栈与队列：单调队列、单调栈 kmp Trie 并查集 堆 Hash表  链表与邻接表：树与图的存储 用数组来模拟这些结构，不适用struct和STL。目的是为了提高效率
 1 2 3 4 5 6 7  struct Node { int val; Node * next; }; Node * p = new Node();   面试题较多，但是new一个节点是比较慢的，做题不需要。
@@ -22,7 +22,7 @@
 <link rel="mask-icon" href="https://imingx.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<meta name="generator" content="Hugo 0.84.4" />
+<meta name="generator" content="Hugo 0.88.1" />
 <noscript>
     <style>
         #theme-toggle,
@@ -120,7 +120,7 @@
   },
   "publisher": {
     "@type": "Organization",
-    "name": "Blog",
+    "name": "Ming Blog",
     "logo": {
       "@type": "ImageObject",
       "url": "https://imingx.github.io/favicon.ico"
@@ -145,7 +145,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://imingx.github.io/" accesskey="h" title="Blog (Alt + H)">Blog</a>
+            <a href="https://imingx.github.io/" accesskey="h" title="Ming Blog (Alt + H)">Ming Blog</a>
             <span class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -186,8 +186,8 @@
                 </a>
             </li>
             <li>
-                <a href="https://imingx.github.io/search/" title="Search (Alt &#43; /)" accesskey=/>
-                    <span>Search</span>
+                <a href="https://imingx.github.io/about/" title="About">
+                    <span>About</span>
                 </a>
             </li>
         </ul>
@@ -264,7 +264,7 @@
 <p>用数组来模拟这些结构，不适用struct和STL。目的是为了提高效率</p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">4
@@ -273,7 +273,7 @@
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">7
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">struct</span> <span style="color:#268bd2">Node</span>
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">struct</span> <span style="color:#268bd2">Node</span>
 {
 		<span style="color:#dc322f">int</span> val;
 		Node <span style="color:#719e07">*</span> next;
@@ -290,7 +290,7 @@ Node <span style="color:#719e07">*</span> p <span style="color:#719e07">=</span>
 <p>以上是用数组e[N]和数组ne[N]来模拟单链表，如果是不存在，那么取-1。</p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -362,7 +362,7 @@ Node <span style="color:#719e07">*</span> p <span style="color:#719e07">=</span>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">70
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07"></span>
 <span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std; 
 
@@ -441,7 +441,7 @@ Node <span style="color:#719e07">*</span> p <span style="color:#719e07">=</span>
 </p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -487,7 +487,7 @@ Node <span style="color:#719e07">*</span> p <span style="color:#719e07">=</span>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">44
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07"></span>
 <span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
 
@@ -538,7 +538,7 @@ Node <span style="color:#719e07">*</span> p <span style="color:#719e07">=</span>
 <p>栈就是先进后出。</p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -571,7 +571,7 @@ Node <span style="color:#719e07">*</span> p <span style="color:#719e07">=</span>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07"></span>
 <span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
 
@@ -607,7 +607,7 @@ Node <span style="color:#719e07">*</span> p <span style="color:#719e07">=</span>
 </div><p>队列：</p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -624,7 +624,7 @@ Node <span style="color:#719e07">*</span> p <span style="color:#719e07">=</span>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">
 <span style="color:#dc322f">int</span> q[N], hh <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>, tt <span style="color:#719e07">=</span> <span style="color:#719e07">-</span><span style="color:#2aa198">1</span>; <span style="color:#586e75">//hh是队头， tt是队尾。队尾插入，队头弹出
 </span><span style="color:#586e75"></span>
 <span style="color:#586e75">//插入
@@ -648,7 +648,7 @@ Node <span style="color:#719e07">*</span> p <span style="color:#719e07">=</span>
 <p>这样x再入栈，就是一个单调递增的栈序列。而找到最小的，只要找到x入栈前的栈顶即可。</p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -678,7 +678,7 @@ Node <span style="color:#719e07">*</span> p <span style="color:#719e07">=</span>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07"></span>
 <span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
 
@@ -720,17 +720,17 @@ Node <span style="color:#719e07">*</span> p <span style="color:#719e07">=</span>
 <p>O3优化</p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#pragma GCC optimize(2)
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#pragma GCC optimize(2)
 </span></code></pre></td></tr></table>
 </div>
 </div><p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/9f3fc322-fb8d-4826-b9cb-b3b007debd35/Untitled.png" alt="Untitled"  />
 </p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -780,7 +780,7 @@ Node <span style="color:#719e07">*</span> p <span style="color:#719e07">=</span>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">48
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07"></span>
 <span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
 
@@ -858,7 +858,7 @@ for(int  i = 1; i ≤ n; ++i)</p>
 </p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -902,7 +902,7 @@ for(int  i = 1; i ≤ n; ++i)</p>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">42
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstdio&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07"></span>
 <span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
@@ -963,7 +963,7 @@ dcdc</p>
 </p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -1012,7 +1012,7 @@ dcdc</p>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">47
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstdio&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07"></span>
 <span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
@@ -1088,7 +1088,7 @@ dcdc</p>
 <p><a href="https://www.acwing.com/problem/content/838/">https://www.acwing.com/problem/content/838/</a></p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -1126,7 +1126,7 @@ dcdc</p>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">36
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstdio&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07"></span>
 <span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
@@ -1167,7 +1167,7 @@ dcdc</p>
 </div><p>连通块中点的数量<a href="https://www.acwing.com/problem/content/839/">https://www.acwing.com/problem/content/839/</a></p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -1222,7 +1222,7 @@ dcdc</p>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">53
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstdio&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07"></span>
 <span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
@@ -1318,7 +1318,7 @@ dcdc</p>
 </ul>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -1375,7 +1375,7 @@ dcdc</p>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">55
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;algorithm&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07"></span>
 <span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
@@ -1436,7 +1436,7 @@ dcdc</p>
 <p><a href="https://www.acwing.com/problem/content/841/">https://www.acwing.com/problem/content/841/</a></p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -1525,7 +1525,7 @@ dcdc</p>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">87
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;algorithm&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstring&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07"></span>
@@ -1639,7 +1639,7 @@ dcdc</p>
 </ul>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -1698,7 +1698,7 @@ dcdc</p>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">57
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#586e75">//拉链法
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#586e75">//拉链法
 </span><span style="color:#586e75"></span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstring&gt;//有memset</span><span style="color:#719e07">
 </span><span style="color:#719e07"></span>
@@ -1761,7 +1761,7 @@ dcdc</p>
 </p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -1817,7 +1817,7 @@ dcdc</p>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">54
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#586e75">//开放寻址法
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#586e75">//开放寻址法
 </span><span style="color:#586e75"></span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstring&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07"></span>
@@ -1888,7 +1888,7 @@ h[2] = &ldquo;AB&rdquo;</p>
 <p>所以求L - R的哈希值，只要 h[R] - h[L - 1] * p ^ {R-L+1};</p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -1935,7 +1935,7 @@ h[2] = &ldquo;AB&rdquo;</p>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">45
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstring&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07"></span>
 <span style="color:#719e07">using</span> <span style="color:#719e07">namespace</span> std;
@@ -1987,7 +1987,7 @@ ULL <span style="color:#268bd2">get</span>(<span style="color:#dc322f">int</span
 <h1 id="cstl使用">C++STL使用<a hidden class="anchor" aria-hidden="true" href="#cstl使用">#</a></h1>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -2002,7 +2002,7 @@ ULL <span style="color:#268bd2">get</span>(<span style="color:#dc322f">int</span
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">vector 可变长数组，倍增的思想
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">vector 可变长数组，倍增的思想
 string 处理字符串的利器，substr(), c_str()
 queue, 队列，进行push(),front(), pop()
 priority_queue，优先队列，堆，push(), top(), pop()
@@ -2020,7 +2020,7 @@ list用的不多。
 </div><h2 id="vector">vector:<a hidden class="anchor" aria-hidden="true" href="#vector">#</a></h2>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
@@ -2059,7 +2059,7 @@ list用的不多。
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">37
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;iostream&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstdio&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;cstring&gt;</span><span style="color:#719e07">
 </span><span style="color:#719e07">#include</span><span style="color:#719e07">&lt;algorithm&gt;</span><span style="color:#719e07">
@@ -2101,7 +2101,7 @@ list用的不多。
 </div><h2 id="下面是模板">下面是模板<a hidden class="anchor" aria-hidden="true" href="#下面是模板">#</a></h2>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">  1
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">  1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">  2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">  3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">  4
@@ -2227,7 +2227,7 @@ list用的不多。
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">124
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">C<span style="color:#719e07">++</span> STL简介
+<pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">C<span style="color:#719e07">++</span> STL简介
 vector, 变长数组，倍增的思想
     size()  返回元素个数
     empty()  返回是否为空
@@ -2363,7 +2363,7 @@ bitset, 圧位
     </main>
     
 <footer class="footer">
-    <span>&copy; 2021 <a href="https://imingx.github.io/">Blog</a></span>
+    <span>&copy; 2021 <a href="https://imingx.github.io/">Ming Blog</a></span>
     <span>
         Powered by
         <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &

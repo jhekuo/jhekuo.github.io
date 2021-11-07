@@ -287,9 +287,7 @@ Node <span style="color:#719e07">*</span> p <span style="color:#719e07">=</span>
 <p>最常用的邻接表，存储图和树。它们都是用邻接表存储的。</p>
 <p><img loading="lazy" src="img1.png" alt="Untitled"  />
 </p>
-<p><img loading="lazy" src="/img1.png" alt=""  />
-
-以上是用数组e[N]和数组ne[N]来模拟单链表，如果是不存在，那么取-1。</p>
+<p>以上是用数组e[N]和数组ne[N]来模拟单链表，如果是不存在，那么取-1。</p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
@@ -439,7 +437,7 @@ Node <span style="color:#719e07">*</span> p <span style="color:#719e07">=</span>
 </div><h2 id="用数组模拟双链表">用数组模拟双链表<a hidden class="anchor" aria-hidden="true" href="#用数组模拟双链表">#</a></h2>
 <p>用来优化某些问题。</p>
 <p>int l[N], r[N];，让0是head，1是tail</p>
-<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/17c4716d-8998-42db-b3ad-ebe504d12680/Untitled.png" alt="Untitled"  />
+<p><img loading="lazy" src="img2.png" alt="Untitled"  />
 </p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -728,7 +726,7 @@ Node <span style="color:#719e07">*</span> p <span style="color:#719e07">=</span>
 <pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#719e07">#pragma GCC optimize(2)
 </span></code></pre></td></tr></table>
 </div>
-</div><p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/9f3fc322-fb8d-4826-b9cb-b3b007debd35/Untitled.png" alt="Untitled"  />
+</div><p><img loading="lazy" src="img3.png" alt="Untitled"  />
 </p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -852,11 +850,11 @@ for(int  i = 1; i ≤ n; ++i)</p>
 </blockquote>
 <p>KMP解释（以1开始）</p>
 <p>next数组表示，next[i] = j，表示p[1, j] = p[ i - j  + 1, i]</p>
-<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/db794d13-ef6f-4ed1-939c-8bebf537273c/Untitled.png" alt="Untitled"  />
+<p><img loading="lazy" src="img4.png" alt="Untitled"  />
 </p>
-<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/43e641ee-0294-4f5f-8b5f-c3aa28229b13/Untitled.png" alt="Untitled"  />
+<p><img loading="lazy" src="img5.png" alt="Untitled"  />
 </p>
-<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0a555ea3-403b-481f-acd4-92d5e522009d/Untitled.png" alt="Untitled"  />
+<p><img loading="lazy" src="img6.png" alt="Untitled"  />
 </p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -961,7 +959,7 @@ cdaa
 dcdc</p>
 </blockquote>
 <p>当数量过大，可以使用二进制来表示。比如考虑汉字，直接找其二进制100000101010,每一步仅考虑1和0.</p>
-<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/a3936e10-1a45-453a-8b98-061af3667eeb/Untitled.png" alt="Untitled"  />
+<p><img loading="lazy" src="img7.png" alt="Untitled"  />
 </p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -1072,7 +1070,7 @@ dcdc</p>
 </ol>
 <p>belong[x] = a，存储x属于集合a。</p>
 <p>近乎O（1）的支持上面的两个操作。</p>
-<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/bce5892b-f9ae-4e8b-ac52-3bf5dd4e765a/Untitled.png" alt="Untitled"  />
+<p><img loading="lazy" src="img8.png" alt="Untitled"  />
 </p>
 <p>基本原理：每个集合用一棵树来表示，树根的编号就是整个集合的编号，每个节点存储它的父节点，p[x] 表示父节点。</p>
 <ul>
@@ -1080,7 +1078,7 @@ dcdc</p>
 <li>问题2：如何求x的集合编号，while(p<input checked="" disabled="" type="checkbox"> ! = x) x = p<input checked="" disabled="" type="checkbox"> </li>
 <li>问题3：如何合并两个集合：假设px是x的集合的编号，py是y的集合的编号，那么p<input checked="" disabled="" type="checkbox"> = y;</li>
 </ul>
-<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e199febc-7ab2-49e1-b522-8eaed0016ff8/Untitled.png" alt="Untitled"  />
+<p><img loading="lazy" src="img9.png" alt="Untitled"  />
 </p>
 <p>并查集的优化：</p>
 <ul>
@@ -1627,7 +1625,7 @@ dcdc</p>
 </li>
 <li>
 <p>拉链法</p>
-<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c103ba4d-0bef-4bee-b9f3-1c51a2edfada/Untitled.png" alt="Untitled"  />
+<p><img loading="lazy" src="img10.png" alt="Untitled"  />
 </p>
 </li>
 </ul>
@@ -1759,7 +1757,7 @@ dcdc</p>
 }
 </code></pre></td></tr></table>
 </div>
-</div><p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/05f2a974-0519-4bbe-8f51-05e41481dcb7/Untitled.png" alt="Untitled"  />
+</div><p><img loading="lazy" src="img11.png" alt="Untitled"  />
 </p>
 <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -1884,7 +1882,7 @@ h[2] = &ldquo;AB&rdquo;</p>
 <p>即处理前缀的hash，h[0] = 0</p>
 <p>如果对字符串进行哈希？当成p进制数，a * p ^ 3 + b * p * 2 ……;再取模Q。</p>
 <p>不能把字母映射成0.</p>
-<p><img loading="lazy" src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/715c9902-4611-463d-8c95-8172d7224eaf/Untitled.png" alt="Untitled"  />
+<p><img loading="lazy" src="img12.png" alt="Untitled"  />
 </p>
 <p>那么前缀哈希值有什么用呢？因为我们已经知道 h[L]到h[R]的哈希值</p>
 <p>所以求L - R的哈希值，只要 h[R] - h[L - 1] * p ^ {R-L+1};</p>
